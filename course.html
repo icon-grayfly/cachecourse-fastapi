@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#163c34">
+    <meta name="description" content="Course overview, source-linked modules, and flexible study schedules in CacheCourse.">
+    <title>Course · Learning Hub · CacheCourse</title>
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles.css">
+    <script type="module" src="/src/shell.js"></script>
+    <script type="module" src="/src/course-page.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/index.html" aria-label="CacheCourse home">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M5 10c6-2 11-1 15 2v18c-4-3-9-4-15-2V10Z"></path><path d="M35 10c-6-2-11-1-15 2v18c4-3 9-4 15-2V10Z"></path></svg></span>
+          <span class="brand-word">cachecourse<span class="brand-period">.</span></span>
+        </a>
+        <nav class="topnav" aria-label="Main navigation">
+          <a class="topnav-link" href="/index.html">My pathway</a>
+          <a class="topnav-link" href="/api-studio.html">API Studio</a>
+          <a class="topnav-link active" href="/learning-hub.html" aria-current="page">Learning Hub</a>
+          <a class="topnav-link" href="/sources.html">Source notes</a>
+        </nav>
+        <div class="topbar-actions">
+          <div class="signal-pill" id="connection-status" role="status" aria-live="polite"><span class="signal-dot"></span><span id="connection-label">Checking connection</span></div>
+          <button class="icon-button install-button" id="install-button" type="button" hidden aria-label="Install CacheCourse"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v9m0 0 3.5-3.5M10 11 6.5 7.5M3 12.5v3A1.5 1.5 0 0 0 4.5 17h11a1.5 1.5 0 0 0 1.5-1.5v-3"></path></svg></button>
+        </div>
+      </header>
+
+      <main class="course-page" id="course-page">
+        <nav class="course-breadcrumbs" aria-label="Breadcrumb"><a href="/learning-hub.html">Learning Hub</a><span aria-hidden="true">/</span><span id="course-breadcrumb-current">Course</span></nav>
+        <section class="course-hero" id="course-hero" aria-labelledby="course-title">
+          <div class="course-hero-main">
+            <div class="course-eyebrow" id="course-eyebrow">COURSE COMPANION</div>
+            <div class="course-code-line"><span class="course-code" id="course-code"></span><span class="course-level" id="course-level"></span></div>
+            <h1 id="course-title">Loading course…</h1>
+            <p id="course-description"></p>
+            <div class="course-hero-actions" id="course-actions"></div>
+          </div>
+          <aside class="course-overview" aria-label="Course overview">
+            <div class="course-art" id="course-art" aria-hidden="true"><span class="course-art-orbit"></span><span class="course-art-symbol">{ }</span></div>
+            <div class="course-overview-row"><span>Department</span><strong id="course-department"></strong></div>
+            <div class="course-overview-row"><span>Learning space</span><strong id="course-institution"></strong></div>
+            <div class="course-overview-row"><span>Format</span><strong id="course-format"></strong></div>
+          </aside>
+        </section>
+
+        <section class="course-schedule" aria-labelledby="schedule-title">
+          <div class="course-schedule-heading">
+            <div><div class="section-kicker">YOUR COURSE MATERIALS</div><h2 id="schedule-title">Follow your course</h2><p id="schedule-description">Choose a view that fits how you like to study.</p></div>
+            <div class="schedule-switch" role="group" aria-label="Organize course materials">
+              <button class="schedule-view is-selected" type="button" data-view="weeks" aria-pressed="true">By weeks</button>
+              <button class="schedule-view" type="button" data-view="sessions" aria-pressed="false">Study sessions</button>
+            </div>
+          </div>
+          <p class="schedule-context" id="schedule-context"></p>
+          <div class="schedule-groups" id="schedule-groups"></div>
+        </section>
+        <section class="course-source-note" id="course-source-note" aria-label="Course source note"></section>
+      </main>
+      <footer class="page-footer"><span>CacheCourse <span class="footer-dot">●</span> A focused learning prototype</span><span>Made for learning between connections.</span></footer>
+    </div>
+  </body>
+</html>

@@ -1,7 +1,7 @@
 {
-  "name": "CacheCourse — FastAPI learning path",
+  "name": "CacheCourse — Learning Hub",
   "short_name": "CacheCourse",
-  "description": "A source-linked FastAPI learning path that works offline after download.",
+  "description": "Source-linked courses and learning tools that work offline after download.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

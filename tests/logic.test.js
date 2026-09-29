@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { LESSONS } from "../src/lessons.js";
+import { COURSES, getCourse, getCourseSchedule } from "../src/catalog.js";
 import { simulateRequest } from "../src/api-simulator.js";
 import { answerCompilerQuestion, completeLesson, createInitialState, getNextLesson, getSuggestedRoute, isOpportunityUnlocked, normalizeState, setRoute } from "../src/logic.js";
 
@@ -105,4 +106,29 @@ test("compiler sample completion cannot be introduced or revoked by invalid save
   const unchanged = answerCompilerQuestion(completed, "keyword");
   assert.equal(unchanged.compilerModuleCompleted, true);
   assert.equal(unchanged.compilerModuleAnswer, "operator");
+});
+
+test("Learning Hub exposes real courses under distinct departments", () => {
+  assert.equal(getCourse("csc408").department, "Computer Science");
+  assert.equal(getCourse("fastapi").department, "Software Engineering");
+  assert.equal(getCourse("unknown"), null);
+  assert.equal(COURSES.length, 2);
+});
+
+test("FastAPI week and study-session views include every lesson once and in order", () => {
+  const expected = LESSONS.map((lesson) => lesson.title);
+  for (const view of ["weeks", "sessions"]) {
+    const actual = getCourseSchedule("fastapi", view).flatMap((group) => group.items.map((item) => item.title));
+    assert.deepEqual(actual, expected);
+  }
+  assert.ok(getCourseSchedule("fastapi", "sessions").every((group) => group.subtitle.includes("1-hour block")));
+});
+
+test("CSC 408 schedule distinguishes one interactive sample from unbuilt source-reading sections", () => {
+  const interactive = getCourseSchedule("csc408", "weeks").flatMap((group) => group.items).filter((item) => item.href);
+  const sourceReading = getCourseSchedule("csc408", "weeks").flatMap((group) => group.items).filter((item) => !item.href);
+  assert.equal(interactive.length, 1);
+  assert.equal(interactive[0].href, "/module-compiler.html");
+  assert.equal(sourceReading.length, 3);
+  assert.equal(getCourseSchedule("csc408", "invalid").length, 0);
 });

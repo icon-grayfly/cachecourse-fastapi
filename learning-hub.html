@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#163c34">
+    <meta name="description" content="Browse CacheCourse learning paths by department, course, and study schedule.">
+    <title>Learning Hub · CacheCourse</title>
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles.css">
+    <script type="module" src="/src/shell.js"></script>
+    <script type="module" src="/src/learning-hub.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/index.html" aria-label="CacheCourse home">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M5 10c6-2 11-1 15 2v18c-4-3-9-4-15-2V10Z"></path><path d="M35 10c-6-2-11-1-15 2v18c4-3 9-4 15-2V10Z"></path></svg></span>
+          <span class="brand-word">cachecourse<span class="brand-period">.</span></span>
+        </a>
+        <nav class="topnav" aria-label="Main navigation">
+          <a class="topnav-link" href="/index.html">My pathway</a>
+          <a class="topnav-link" href="/api-studio.html">API Studio</a>
+          <a class="topnav-link active" href="/learning-hub.html" aria-current="page">Learning Hub</a>
+          <a class="topnav-link" href="/sources.html">Source notes</a>
+        </nav>
+        <div class="topbar-actions">
+          <div class="signal-pill" id="connection-status" role="status" aria-live="polite"><span class="signal-dot"></span><span id="connection-label">Checking connection</span></div>
+          <button class="icon-button install-button" id="install-button" type="button" hidden aria-label="Install CacheCourse"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v9m0 0 3.5-3.5M10 11 6.5 7.5M3 12.5v3A1.5 1.5 0 0 0 4.5 17h11a1.5 1.5 0 0 0 1.5-1.5v-3"></path></svg></button>
+        </div>
+      </header>
+
+      <main class="hub-page">
+        <section class="hub-hero" aria-labelledby="hub-title">
+          <div class="hub-hero-copy">
+            <div class="hub-kicker"><span class="hub-kicker-dot"></span> LEARNING HUB · COURSES & TOOLS</div>
+            <h1 id="hub-title">Find your next<br><span>learning space.</span></h1>
+            <p>Browse by department, choose a course, and follow its material in the rhythm that works for you—week by week or one study block at a time.</p>
+            <label class="hub-search"><span class="sr-only">Search courses and departments</span><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"></circle><path d="m13 13 4 4"></path></svg><input id="course-search" type="search" placeholder="Search a course or department" autocomplete="off"></label>
+          </div>
+          <div class="hub-hero-panel" aria-label="Learning Hub overview">
+            <div class="hub-book-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 13c10-3 18-1 24 4v36c-6-5-14-7-24-4V13Zm48 0c-10-3-18-1-24 4v36c6-5 14-7 24-4V13Z"></path></svg></div>
+            <div class="hub-hero-panel-label">A clearer way through</div>
+            <p>Course materials, practice tools, and next steps gathered in one place.</p>
+            <div class="hub-hero-tags"><span>Offline-ready</span><span>Self-paced</span><span>Source-linked</span></div>
+          </div>
+        </section>
+
+        <section class="hub-catalog" aria-labelledby="catalog-title">
+          <div class="hub-section-heading">
+            <div><div class="section-kicker">EXPLORE THE COLLECTION</div><h2 id="catalog-title">Courses and pathways</h2></div>
+            <p id="course-count" class="hub-count" aria-live="polite">2 learning spaces</p>
+          </div>
+          <div class="hub-filters" role="group" aria-label="Filter by department">
+            <button class="hub-filter is-selected" type="button" data-department="all" aria-pressed="true">All learning spaces <span>02</span></button>
+            <button class="hub-filter" type="button" data-department="Computer Science" aria-pressed="false">Computer Science</button>
+            <button class="hub-filter" type="button" data-department="Software Engineering" aria-pressed="false">Software Engineering</button>
+          </div>
+          <div class="hub-results-heading"><span id="results-label">Featured learning spaces</span><span>Updated as modules are added</span></div>
+          <div class="course-grid" id="course-grid" aria-live="polite"></div>
+          <p class="hub-empty" id="course-empty" hidden>No courses match that search yet. Try a different title or department.</p>
+          <aside class="hub-note"><span class="hub-note-icon" aria-hidden="true">i</span><p>This is a growing proof of concept. Course previews identify source reading separately from interactive modules, so learners can see what is ready and what is still being built.</p></aside>
+        </section>
+      </main>
+      <footer class="page-footer"><span>CacheCourse <span class="footer-dot">●</span> A focused learning prototype</span><span>Made for learning between connections.</span></footer>
+    </div>
+  </body>
+</html>

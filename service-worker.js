@@ -1,9 +1,11 @@
-const CACHE_NAME = "cachecourse-shell-v3";
+const CACHE_NAME = "cachecourse-shell-v4";
 const PACK_CACHE = "cachecourse-lessons-v1";
 const SHELL = [
   "/",
   "/index.html",
   "/api-studio.html",
+  "/learning-hub.html",
+  "/course.html",
   "/module-compiler.html",
   "/sources.html",
   "/styles.css",
@@ -12,6 +14,9 @@ const SHELL = [
   "/src/shell.js",
   "/src/app.js",
   "/src/api-studio-app.js",
+  "/src/catalog.js",
+  "/src/learning-hub.js",
+  "/src/course-page.js",
   "/src/compiler-module-app.js",
   "/src/lessons.js",
   "/src/logic.js",
@@ -39,7 +44,7 @@ self.addEventListener("message", (event) => {
 self.addEventListener("fetch", (event) => {
   const request = event.request;
   if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return;
-  event.respondWith(caches.match(request).then((cached) => {
+  event.respondWith(caches.match(request, { ignoreSearch: true }).then((cached) => {
     if (cached) return cached;
     return fetch(request).catch(() => {
       if (request.mode === "navigate") return caches.match("/index.html");
