@@ -1,0 +1,18 @@
+{
+  "name": "CacheCourse — FastAPI learning path",
+  "short_name": "CacheCourse",
+  "description": "A source-linked FastAPI learning path that works offline after download.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f5ef",
+  "theme_color": "#163c34",
+  "icons": [
+    {
+      "src": "/assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
