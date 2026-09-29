@@ -46,7 +46,7 @@ The sample page teaches lexical analysis and token categories using original exp
 
 The app is a small static multi-page PWA. Header links use ordinary same-tab navigation to separate HTML documents. The Learning Hub filters the catalog by department and search text; each course page renders schedule groups from `src/catalog.js`, with a switch between week and suggested study-session organization. The Service Worker precaches the app pages and their scripts/styles, while the optional downloaded FastAPI lesson pack remains a separate Cache API entry.
 
-The FastAPI course's one-hour study blocks are suggestions for adding API Studio practice and review to the short lesson content. They are not lecture durations or an institutional timetable. The CSC 408 source summary is not hosted in the app; learners need their own supplied copy to read the referenced pages.
+Each course card opens directly into its learning workspace, with a left course outline. Selecting a week/session header shows its section overview; selecting a module opens its reading or practice in place. FastAPI and CSC 408 answers share the existing on-device IndexedDB progress store. The FastAPI course's one-hour study blocks are suggestions for adding API Studio practice and review to the short lesson content. They are not lecture durations or an institutional timetable. The CSC 408 source summary is not hosted in the app; learners need their own supplied copy to read the referenced pages.
 
 ## Content and opportunity notes
 

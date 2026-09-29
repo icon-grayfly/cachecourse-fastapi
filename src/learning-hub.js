@@ -13,7 +13,7 @@ function escapeHtml(value) {
 }
 
 function cardMarkup(course) {
-  const href = "/course.html?course=" + encodeURIComponent(course.id);
+  const href = "/course.html?course=" + encodeURIComponent(course.id) + "#course-workspace";
   const pathwayLabel = course.id === "fastapi" ? "Open pathway" : "View course";
   const moduleLabel = course.interactiveCount === 1 ? "1 interactive sample" : course.interactiveCount + " interactive lessons";
   return '<article class="course-tile course-tile-' + escapeHtml(course.accent) + '">' +

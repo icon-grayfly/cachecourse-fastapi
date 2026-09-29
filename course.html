@@ -49,16 +49,23 @@
           </aside>
         </section>
 
-        <section class="course-schedule" aria-labelledby="schedule-title">
-          <div class="course-schedule-heading">
-            <div><div class="section-kicker">YOUR COURSE MATERIALS</div><h2 id="schedule-title">Follow your course</h2><p id="schedule-description">Choose a view that fits how you like to study.</p></div>
-            <div class="schedule-switch" role="group" aria-label="Organize course materials">
+        <section class="course-workspace" id="course-workspace" aria-label="Course learning workspace">
+          <aside class="course-sidebar" aria-labelledby="course-outline-title">
+            <div class="course-sidebar-heading">
+              <div class="section-kicker">COURSE CONTENT</div>
+              <h2 id="course-outline-title">Course outline</h2>
+              <p id="outline-description">Choose a section or module to study.</p>
+            </div>
+            <div class="schedule-switch" role="group" aria-label="Organize course outline">
               <button class="schedule-view is-selected" type="button" data-view="weeks" aria-pressed="true">By weeks</button>
               <button class="schedule-view" type="button" data-view="sessions" aria-pressed="false">Study sessions</button>
             </div>
-          </div>
-          <p class="schedule-context" id="schedule-context"></p>
-          <div class="schedule-groups" id="schedule-groups"></div>
+            <nav class="course-outline-nav" id="course-outline" aria-label="Course sections and modules"></nav>
+            <div class="course-sidebar-note"><span aria-hidden="true">✓</span><p>Your answers and completed lessons stay on this device.</p></div>
+          </aside>
+          <article class="course-learning-content" id="course-learning-content" aria-live="polite" aria-labelledby="learning-content-title">
+            <div class="course-content-empty"><div class="section-kicker">SELECT A MODULE</div><h2 id="learning-content-title">Your course workspace</h2><p>Choose a module from the course outline to open its lesson and practice here.</p></div>
+          </article>
         </section>
         <section class="course-source-note" id="course-source-note" aria-label="Course source note"></section>
       </main>

@@ -2,11 +2,12 @@ import { LESSONS } from "./lessons.js";
 
 const lessonsById = new Map(LESSONS.map((lesson) => [lesson.id, lesson]));
 const lessonItems = (ids) => ids.map((id) => ({
+  moduleKey: "lesson:" + id,
+  lessonId: id,
   title: lessonsById.get(id).title,
   detail: lessonsById.get(id).subtitle,
   duration: lessonsById.get(id).duration,
-  type: "Interactive practice",
-  href: "/index.html#lesson-list"
+  type: "Interactive practice"
 }));
 
 export const COURSES = [
@@ -28,19 +29,19 @@ export const COURSES = [
           title: "Weeks 1–4",
           subtitle: "Course summary · pages 2–5",
           items: [
-            { title: "How source code becomes tokens", detail: "A short original lesson on lexical analysis", duration: "6 min", type: "Interactive sample", href: "/module-compiler.html" },
-            { title: "Continue with the source summary", detail: "Use the supplied course document for the rest of this section", duration: "Pages 3–5", type: "Source reading" }
+            { moduleKey: "csc408:tokens", title: "How source code becomes tokens", detail: "A short original lesson on lexical analysis", duration: "6 min", type: "Interactive sample" },
+            { moduleKey: "csc408:reading-1-4", title: "Continue with the source summary", detail: "Use the supplied course document for the rest of this section", duration: "Pages 3–5", type: "Source reading" }
           ]
         },
         {
           title: "Weeks 5–8",
           subtitle: "Course summary · pages 6–8",
-          items: [{ title: "Course material reading set", detail: "Reference the corresponding pages in your supplied CSC 408 course summary", duration: "Pages 6–8", type: "Source reading · not yet interactive" }]
+          items: [{ moduleKey: "csc408:reading-5-8", title: "Course material reading set", detail: "Reference the corresponding pages in your supplied CSC 408 course summary", duration: "Pages 6–8", type: "Source reading · not yet interactive" }]
         },
         {
           title: "Weeks 9–12",
           subtitle: "Course summary · pages 9–11",
-          items: [{ title: "Course material reading set", detail: "Reference the corresponding pages in your supplied CSC 408 course summary", duration: "Pages 9–11", type: "Source reading · not yet interactive" }]
+          items: [{ moduleKey: "csc408:reading-9-12", title: "Course material reading set", detail: "Reference the corresponding pages in your supplied CSC 408 course summary", duration: "Pages 9–11", type: "Source reading · not yet interactive" }]
         }
       ],
       sessions: [
@@ -48,19 +49,19 @@ export const COURSES = [
           title: "Study block · Weeks 1–4",
           subtitle: "Suggested 1-hour block · flexible pacing, not an official timetable",
           items: [
-            { title: "How source code becomes tokens", detail: "Complete the interactive sample, then review the matching source pages", duration: "6 min interactive + review", type: "Interactive sample", href: "/module-compiler.html" },
-            { title: "Course summary review", detail: "Continue in the supplied CSC 408 course document", duration: "Pages 2–5", type: "Source reading" }
+            { moduleKey: "csc408:tokens", title: "How source code becomes tokens", detail: "Complete the interactive sample, then review the matching source pages", duration: "6 min interactive + review", type: "Interactive sample" },
+            { moduleKey: "csc408:reading-1-4", title: "Course summary review", detail: "Continue in the supplied CSC 408 course document", duration: "Pages 2–5", type: "Source reading" }
           ]
         },
         {
           title: "Study block · Weeks 5–8",
           subtitle: "Suggested 1-hour block · flexible pacing, not an official timetable",
-          items: [{ title: "Course summary review", detail: "Read and make notes from the supplied course document", duration: "Pages 6–8", type: "Source reading · not yet interactive" }]
+          items: [{ moduleKey: "csc408:reading-5-8", title: "Course summary review", detail: "Read and make notes from the supplied course document", duration: "Pages 6–8", type: "Source reading · not yet interactive" }]
         },
         {
           title: "Study block · Weeks 9–12",
           subtitle: "Suggested 1-hour block · flexible pacing, not an official timetable",
-          items: [{ title: "Course summary review", detail: "Read and make notes from the supplied course document", duration: "Pages 9–11", type: "Source reading · not yet interactive" }]
+          items: [{ moduleKey: "csc408:reading-9-12", title: "Course summary review", detail: "Read and make notes from the supplied course document", duration: "Pages 9–11", type: "Source reading · not yet interactive" }]
         }
       ]
     }

@@ -125,10 +125,18 @@ test("FastAPI week and study-session views include every lesson once and in orde
 });
 
 test("CSC 408 schedule distinguishes one interactive sample from unbuilt source-reading sections", () => {
-  const interactive = getCourseSchedule("csc408", "weeks").flatMap((group) => group.items).filter((item) => item.href);
-  const sourceReading = getCourseSchedule("csc408", "weeks").flatMap((group) => group.items).filter((item) => !item.href);
+  const interactive = getCourseSchedule("csc408", "weeks").flatMap((group) => group.items).filter((item) => item.moduleKey === "csc408:tokens");
+  const sourceReading = getCourseSchedule("csc408", "weeks").flatMap((group) => group.items).filter((item) => item.moduleKey !== "csc408:tokens");
   assert.equal(interactive.length, 1);
-  assert.equal(interactive[0].href, "/module-compiler.html");
+  assert.equal(interactive[0].title, "How source code becomes tokens");
   assert.equal(sourceReading.length, 3);
   assert.equal(getCourseSchedule("csc408", "invalid").length, 0);
+});
+
+test("course outline module identifiers are stable between week and study-session views", () => {
+  for (const course of COURSES) {
+    const keysByView = ["weeks", "sessions"].map((view) => getCourseSchedule(course.id, view).flatMap((group) => group.items.map((item) => item.moduleKey)));
+    assert.deepEqual([...new Set(keysByView[0])].sort(), [...new Set(keysByView[1])].sort());
+    assert.ok(keysByView.every((keys) => keys.every((key) => typeof key === "string" && key.length > 0)));
+  }
 });
