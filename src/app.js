@@ -1,4 +1,5 @@
 import { LESSONS, OPPORTUNITY } from "./lessons.js";
+import { API_SCENARIOS, simulateRequest } from "./api-simulator.js";
 import { completeLesson, createInitialState, getNextLesson, getSuggestedRoute, isOpportunityUnlocked, normalizeState, setRoute } from "./logic.js";
 import { loadProgress, saveProgress } from "./storage.js";
 
@@ -14,11 +15,17 @@ const ui = {
   offlineCopy: $("#offline-card-copy"), opportunityCard: $("#opportunity-card"), opportunityLock: $("#opportunity-lock"),
   opportunityTitle: $("#opportunity-title"), opportunityDescription: $("#opportunity-description"),
   opportunityMeta: $("#opportunity-meta"), opportunityLink: $("#opportunity-link"), opportunityFootnote: $("#opportunity-footnote"),
+  apiForm: $("#api-form"), apiScenario: $("#api-scenario"), apiMethod: $("#api-method"), apiPath: $("#api-path"),
+  apiBody: $("#api-body"), apiBodyHelp: $("#api-body-help"), apiSend: $("#api-send"), apiCode: $("#api-code"),
+  apiSource: $("#api-source"), apiStatus: $("#api-status"), apiExplanation: $("#api-explanation"),
+  apiResponse: $("#api-response"), apiNotesCount: $("#api-notes-count"), apiNotes: $("#api-notes"),
+  apiClearNotes: $("#api-clear-notes"), apiSessionCount: $("#api-session-count"),
   diagnosticDialog: $("#diagnostic-dialog"), lessonDialog: $("#lesson-dialog"), toastRegion: $("#toast-region"), install: $("#install-button")
 };
 
 let state = createInitialState();
 let installPrompt = null;
+let apiRequestCount = 0;
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[char]);
@@ -93,7 +100,73 @@ function render() {
   ui.download.classList.toggle("is-saved", state.packDownloaded);
   ui.downloadLabel.textContent = state.packDownloaded ? "Lesson pack downloaded" : "Download lesson pack";
   ui.downloadNote.textContent = state.packDownloaded ? "5 lessons · available offline on this device" : "5 lessons · text-first · saves on this device";
+  renderPracticeNotes();
   updateConnection();
+}
+
+function renderPracticeNotes() {
+  const notes = state.practiceNotes || [];
+  ui.apiNotesCount.textContent = String(notes.length);
+  ui.apiClearNotes.hidden = notes.length === 0;
+  if (!notes.length) {
+    ui.apiNotes.innerHTML = '<p class="empty-notes">No notes yet. Create one with the POST scenario.</p>';
+    return;
+  }
+  ui.apiNotes.innerHTML = notes.slice().reverse().map((note) =>
+    '<div class="practice-note"><span class="practice-note-id">#' + note.id + '</span><span class="practice-note-title">' + escapeHtml(note.title) + '</span><span class="practice-note-state">' + (note.done ? 'DONE' : 'OPEN') + '</span></div>'
+  ).join("");
+}
+
+function applyApiScenario(key) {
+  const scenario = API_SCENARIOS[key] || API_SCENARIOS.learner;
+  ui.apiScenario.value = key;
+  ui.apiMethod.value = scenario.method;
+  ui.apiPath.value = scenario.path;
+  ui.apiBody.value = scenario.body;
+  ui.apiCode.textContent = scenario.code;
+  ui.apiSource.href = scenario.sourceUrl;
+  ui.apiSource.textContent = "Open " + scenario.source + " docs ↗";
+  ui.apiBodyHelp.textContent = scenario.method === "GET"
+    ? "GET reads a resource. Switch to the POST scenario to send a small JSON body."
+    : "The Note model expects a non-empty title and an optional boolean done field.";
+}
+
+function showApiResponse(result) {
+  ui.apiStatus.className = "response-status " + (result.status >= 500 ? "status-error" : result.status >= 400 ? "status-warning" : "status-success");
+  ui.apiStatus.textContent = result.status + " · " + result.statusText;
+  ui.apiExplanation.textContent = result.explanation;
+  ui.apiResponse.textContent = JSON.stringify(result.body, null, 2);
+}
+
+async function runApiRequest(event) {
+  event.preventDefault();
+  const result = simulateRequest({ method: ui.apiMethod.value, path: ui.apiPath.value, body: ui.apiBody.value }, state.practiceNotes);
+  apiRequestCount += 1;
+  ui.apiSessionCount.textContent = apiRequestCount + (apiRequestCount === 1 ? " request this session" : " requests this session");
+  state.practiceNotes = result.notes;
+  showApiResponse(result);
+  renderPracticeNotes();
+  if (result.changed) {
+    const saved = await persist();
+    if (!saved) {
+      ui.apiExplanation.textContent += " The note is available for this session, but browser storage could not save it.";
+    }
+  }
+}
+
+async function clearPracticeNotes() {
+  if (!state.practiceNotes.length) return;
+  const confirmed = window.confirm("Clear the practice notes saved on this device? Your lesson progress will stay saved.");
+  if (!confirmed) return;
+  state.practiceNotes = [];
+  await persist();
+  renderPracticeNotes();
+  showApiResponse({
+    status: 200,
+    statusText: "Practice data cleared",
+    body: { items: [], count: 0 },
+    explanation: "The local sample database is empty again. Lesson progress was not changed."
+  });
 }
 
 function questionMarkup(name, label, options) {
@@ -224,6 +297,14 @@ function wireEvents() {
     if (next) openLesson(next);
     else openLesson(LESSONS[LESSONS.length - 1]);
   });
+  ui.apiScenario.addEventListener("change", () => applyApiScenario(ui.apiScenario.value));
+  ui.apiMethod.addEventListener("change", () => {
+    ui.apiBodyHelp.textContent = ui.apiMethod.value === "GET"
+      ? "GET reads a resource. Choose POST /notes to send a small JSON body."
+      : "The Note model expects a non-empty title and an optional boolean done field.";
+  });
+  ui.apiForm.addEventListener("submit", runApiRequest);
+  ui.apiClearNotes.addEventListener("click", clearPracticeNotes);
   ui.lessonList.addEventListener("click", (event) => {
     const button = event.target.closest("[data-lesson]");
     if (!button || button.disabled) return;
@@ -256,6 +337,7 @@ function wireEvents() {
 
 async function start() {
   state = normalizeState(await loadProgress(createInitialState()));
+  applyApiScenario("learner");
   render();
   wireEvents();
   if ("serviceWorker" in navigator) {

@@ -2,7 +2,7 @@
 
 FastAPI practice that keeps working when the connection drops.
 
-CacheCourse is a dependency-free, offline-first learning PWA for first-year online Computer Science students in Lagos. The proof of concept includes a five-lesson FastAPI pathway, a learner-adjustable diagnostic, local challenges with targeted refreshers, on-device progress, and a dated opportunity card.
+CacheCourse is a dependency-free, offline-first learning PWA for first-year online Computer Science students in Lagos. The proof of concept includes a five-lesson FastAPI pathway, a learner-adjustable diagnostic, local challenges with targeted refreshers, an offline API Studio, on-device progress, and a dated opportunity card.
 
 ## Run locally
 
@@ -19,8 +19,9 @@ Open http://localhost:4173. Service Workers require a secure context; localhost 
 1. Open the app while connected.
 2. Choose Download lesson pack and wait for the saved confirmation.
 3. Open the diagnostic or choose a route manually.
-4. Use browser developer tools to disable the network, then refresh and complete a challenge.
-5. Progress stays on this device in IndexedDB. External references and current opportunity availability require a connection.
+4. In API Studio, send a learner lookup and create a practice note. The response is simulated locally; the note is stored in IndexedDB on this device.
+5. Use browser developer tools to disable the network, then refresh. Confirm the lesson pathway and API Studio still load, try a challenge, and use `GET /notes` to read the saved practice note.
+6. Progress and practice notes stay on this device. External references and current opportunity availability require a connection.
 
 ## Tests
 
@@ -28,7 +29,11 @@ Open http://localhost:4173. Service Workers require a secure context; localhost 
 npm test
 ~~~
 
-The unit tests cover pure pathway logic. They do not replace the browser-based Service Worker offline check.
+The unit tests cover pure pathway and API simulation logic. They do not replace the browser-based Service Worker offline check.
+
+## API Studio
+
+API Studio is a deterministic FastAPI-style simulator, not a live Python server. It demonstrates route matching, path-parameter parsing, JSON request-body validation, and response statuses while offline. Learner-entered code is never executed. `POST /notes` creates a synthetic practice note in local browser storage; the Clear local notes control removes only those practice notes.
 
 ## Content and opportunity notes
 

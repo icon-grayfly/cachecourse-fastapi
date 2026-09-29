@@ -1,7 +1,8 @@
 import { LESSONS } from "./lessons.js";
+import { normalizePracticeNotes } from "./api-simulator.js";
 
 export function createInitialState() {
-  return { route: null, completed: [], answers: {}, diagnosticDone: false, packDownloaded: false, lastLessonId: null };
+  return { route: null, completed: [], answers: {}, diagnosticDone: false, packDownloaded: false, lastLessonId: null, practiceNotes: [] };
 }
 
 export function getSuggestedRoute(answers) {
@@ -20,7 +21,8 @@ export function normalizeState(value) {
     answers,
     diagnosticDone: state.diagnosticDone === true,
     packDownloaded: state.packDownloaded === true,
-    lastLessonId: validIds.has(state.lastLessonId) ? state.lastLessonId : null
+    lastLessonId: validIds.has(state.lastLessonId) ? state.lastLessonId : null,
+    practiceNotes: normalizePracticeNotes(state.practiceNotes)
   };
 }
 

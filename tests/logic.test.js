@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { LESSONS } from "../src/lessons.js";
+import { simulateRequest } from "../src/api-simulator.js";
 import { completeLesson, createInitialState, getNextLesson, getSuggestedRoute, isOpportunityUnlocked, normalizeState, setRoute } from "../src/logic.js";
 
 test("diagnostic routes learners by correct answers without blocking manual choice", () => {
@@ -46,4 +47,43 @@ test("every lesson has a source, license reference, and answer that matches an o
     assert.ok(lesson.sourceCheckedAt);
     assert.ok(lesson.options.some((option) => option.id === lesson.answerId));
   }
+});
+
+test("API Studio parses valid path parameters and returns explanatory errors", () => {
+  const found = simulateRequest({ method: "GET", path: "/learners/42" }, []);
+  const invalid = simulateRequest({ method: "GET", path: "/learners/nope" }, []);
+  const missing = simulateRequest({ method: "GET", path: "/learners/88" }, []);
+  assert.equal(found.status, 200);
+  assert.equal(found.body.id, 42);
+  assert.equal(invalid.status, 422);
+  assert.equal(missing.status, 404);
+});
+
+test("API Studio validates JSON and creates notes with a 201 response", () => {
+  const malformed = simulateRequest({ method: "POST", path: "/notes", body: "{" }, []);
+  const missingTitle = simulateRequest({ method: "POST", path: "/notes", body: '{"done":false}' }, []);
+  const created = simulateRequest({ method: "POST", path: "/notes", body: '{"title":"Practice routes"}' }, []);
+  assert.equal(malformed.status, 422);
+  assert.equal(missingTitle.status, 422);
+  assert.equal(created.status, 201);
+  assert.deepEqual(created.body, { id: 1, title: "Practice routes", done: false });
+  assert.equal(created.changed, true);
+});
+
+test("API Studio reads locally saved notes without mutating the input list", () => {
+  const saved = [{ id: 3, title: "Review status codes", done: true }];
+  const result = simulateRequest({ method: "GET", path: "/notes" }, saved);
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.body.items, saved);
+  assert.deepEqual(saved, [{ id: 3, title: "Review status codes", done: true }]);
+});
+
+test("API Studio distinguishes unsupported methods and unknown routes", () => {
+  assert.equal(simulateRequest({ method: "DELETE", path: "/notes" }, []).status, 405);
+  assert.equal(simulateRequest({ method: "GET", path: "/missing" }, []).status, 404);
+});
+
+test("practice note storage is normalized and bounded", () => {
+  const state = normalizeState({ practiceNotes: [{ id: 1, title: "  Local only  ", done: false }, { id: "2", title: "bad id", done: false }] });
+  assert.deepEqual(state.practiceNotes, [{ id: 1, title: "Local only", done: false }]);
 });
