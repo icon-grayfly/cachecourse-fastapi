@@ -9,6 +9,7 @@
     <link rel="manifest" href="/manifest.webmanifest">
     <link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/styles.css">
+    <script type="module" src="/src/shell.js"></script>
     <script type="module" src="/src/app.js"></script>
   </head>
   <body>
@@ -24,9 +25,10 @@
           <span class="brand-word">cachecourse<span class="brand-period">.</span></span>
         </a>
         <nav class="topnav" aria-label="Main navigation">
-          <a class="topnav-link active" href="#pathway">My pathway</a>
-          <a class="topnav-link" href="#api-studio">API Studio</a>
-          <a class="topnav-link" href="#sources">Source notes</a>
+          <a class="topnav-link active" href="/index.html" aria-current="page">My pathway</a>
+          <a class="topnav-link" href="/api-studio.html">API Studio</a>
+          <a class="topnav-link" href="/module-compiler.html">CSC 408 sample</a>
+          <a class="topnav-link" href="/sources.html">Source notes</a>
         </nav>
         <div class="topbar-actions">
           <div class="signal-pill" id="connection-status" role="status" aria-live="polite">
@@ -155,68 +157,7 @@
               <div class="opportunity-footnote" id="opportunity-footnote">A learning milestone is a next step, not a job guarantee.</div>
             </section>
 
-            <section class="sources-card" id="sources">
-              <div class="sources-heading"><span class="source-icon" aria-hidden="true">◎</span><div><h3>Built on trusted sources</h3><p>Every lesson points back to the docs.</p></div></div>
-              <a href="https://fastapi.tiangolo.com/tutorial/first-steps/" target="_blank" rel="noreferrer">Official FastAPI tutorial <span>↗</span></a>
-              <div class="license-note">Original summaries · source links included · license noted per lesson</div>
-            </section>
           </aside>
-        </section>
-
-        <section class="api-studio" id="api-studio" aria-labelledby="api-studio-title">
-          <div class="studio-heading">
-            <div>
-              <div class="section-kicker">THE LOCAL BACKEND LAB</div>
-              <h2 id="api-studio-title">Practice the request round trip.</h2>
-              <p>Build a request, inspect the response, and see how your route and model shape what the client receives.</p>
-            </div>
-            <div class="local-only-pill"><span class="signal-dot"></span> RUNS HERE · WORKS OFFLINE</div>
-          </div>
-
-          <div class="studio-grid">
-            <form class="studio-card request-card" id="api-form">
-              <div class="studio-card-heading"><span class="studio-step">01</span><div><div class="section-kicker">REQUEST BUILDER</div><h3>Shape a request</h3></div></div>
-              <label class="studio-field" for="api-scenario">Guided scenario
-                <select id="api-scenario">
-                  <option value="learner">Find a sample learner · GET</option>
-                  <option value="invalidLearner">Send invalid path data · GET</option>
-                  <option value="createNote">Create a practice note · POST</option>
-                  <option value="listNotes">Read saved practice notes · GET</option>
-                </select>
-              </label>
-              <div class="request-line">
-                <label class="studio-field method-field" for="api-method">Method
-                  <select id="api-method"><option>GET</option><option>POST</option><option>PATCH</option><option>DELETE</option></select>
-                </label>
-                <label class="studio-field path-field" for="api-path">Path
-                  <input id="api-path" type="text" maxlength="160" value="/learners/42" autocomplete="off" spellcheck="false">
-                </label>
-              </div>
-              <label class="studio-field" for="api-body">JSON request body
-                <textarea id="api-body" rows="5" maxlength="500" spellcheck="false" aria-describedby="api-body-help"></textarea>
-              </label>
-              <p class="studio-help" id="api-body-help">GET reads a resource. Choose the POST scenario to send a small JSON body.</p>
-              <div class="studio-actions"><button class="button button-primary" id="api-send" type="submit">Send local request <span aria-hidden="true">→</span></button><span class="session-count" id="api-session-count">0 requests this session</span></div>
-              <div class="studio-code-block">
-                <div class="code-block-heading"><span>FASTAPI ROUTE</span><a id="api-source" href="https://fastapi.tiangolo.com/tutorial/path-params/" target="_blank" rel="noreferrer">Open Path Parameters docs ↗</a></div>
-                <pre><code id="api-code"></code></pre>
-              </div>
-            </form>
-
-            <section class="studio-card response-card" aria-labelledby="response-title">
-              <div class="studio-card-heading"><span class="studio-step response-step">02</span><div><div class="section-kicker">RESPONSE INSPECTOR</div><h3 id="response-title">Read what came back</h3></div></div>
-              <div class="response-status status-idle" id="api-status" role="status" aria-live="polite">Ready when you are</div>
-              <p class="response-explanation" id="api-explanation">Send a sample request to see how method, path parameters, and request models affect the response.</p>
-              <div class="response-json-heading"><span>JSON RESPONSE</span><span>Local simulation</span></div>
-              <pre class="response-json"><code id="api-response">{}</code></pre>
-              <div class="practice-data-heading">
-                <div><div class="section-kicker">LOCAL SAMPLE DATABASE</div><h3>Practice notes <span class="notes-count" id="api-notes-count">0</span></h3></div>
-                <button class="text-button clear-notes-button" id="api-clear-notes" type="button" hidden>Clear local notes</button>
-              </div>
-              <div class="practice-note-list" id="api-notes" aria-live="polite"><p class="empty-notes">No notes yet. Create one with the POST scenario.</p></div>
-              <p class="privacy-note">Practice note titles stay in IndexedDB on this device. Requests never leave this browser.</p>
-            </section>
-          </div>
         </section>
       </main>
 

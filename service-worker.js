@@ -1,6 +1,23 @@
-const CACHE_NAME = "cachecourse-shell-v2";
+const CACHE_NAME = "cachecourse-shell-v3";
 const PACK_CACHE = "cachecourse-lessons-v1";
-const SHELL = ["/", "/index.html", "/styles.css", "/manifest.webmanifest", "/assets/icon.svg", "/src/app.js", "/src/lessons.js", "/src/logic.js", "/src/storage.js", "/src/api-simulator.js"];
+const SHELL = [
+  "/",
+  "/index.html",
+  "/api-studio.html",
+  "/module-compiler.html",
+  "/sources.html",
+  "/styles.css",
+  "/manifest.webmanifest",
+  "/assets/icon.svg",
+  "/src/shell.js",
+  "/src/app.js",
+  "/src/api-studio-app.js",
+  "/src/compiler-module-app.js",
+  "/src/lessons.js",
+  "/src/logic.js",
+  "/src/storage.js",
+  "/src/api-simulator.js"
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting()));

@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { LESSONS } from "../src/lessons.js";
 import { simulateRequest } from "../src/api-simulator.js";
-import { completeLesson, createInitialState, getNextLesson, getSuggestedRoute, isOpportunityUnlocked, normalizeState, setRoute } from "../src/logic.js";
+import { answerCompilerQuestion, completeLesson, createInitialState, getNextLesson, getSuggestedRoute, isOpportunityUnlocked, normalizeState, setRoute } from "../src/logic.js";
 
 test("diagnostic routes learners by correct answers without blocking manual choice", () => {
   assert.equal(getSuggestedRoute([true, true, false]), "fast");
@@ -86,4 +86,23 @@ test("API Studio distinguishes unsupported methods and unknown routes", () => {
 test("practice note storage is normalized and bounded", () => {
   const state = normalizeState({ practiceNotes: [{ id: 1, title: "  Local only  ", done: false }, { id: "2", title: "bad id", done: false }] });
   assert.deepEqual(state.practiceNotes, [{ id: 1, title: "Local only", done: false }]);
+});
+
+test("the CSC 408 sample lesson saves correct completion without changing the FastAPI path", () => {
+  const initial = createInitialState();
+  const incorrect = answerCompilerQuestion(initial, "identifier");
+  assert.equal(incorrect.compilerModuleCompleted, false);
+  const completed = answerCompilerQuestion(incorrect, "operator");
+  assert.equal(completed.compilerModuleCompleted, true);
+  assert.equal(completed.compilerModuleAnswer, "operator");
+  assert.equal(completed.completed.length, 0);
+  assert.equal(normalizeState(completed).compilerModuleCompleted, true);
+});
+
+test("compiler sample completion cannot be introduced or revoked by invalid saved answers", () => {
+  assert.equal(normalizeState({ compilerModuleCompleted: true, compilerModuleAnswer: "identifier" }).compilerModuleCompleted, false);
+  const completed = answerCompilerQuestion(createInitialState(), "operator");
+  const unchanged = answerCompilerQuestion(completed, "keyword");
+  assert.equal(unchanged.compilerModuleCompleted, true);
+  assert.equal(unchanged.compilerModuleAnswer, "operator");
 });

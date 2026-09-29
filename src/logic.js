@@ -2,7 +2,17 @@ import { LESSONS } from "./lessons.js";
 import { normalizePracticeNotes } from "./api-simulator.js";
 
 export function createInitialState() {
-  return { route: null, completed: [], answers: {}, diagnosticDone: false, packDownloaded: false, lastLessonId: null, practiceNotes: [] };
+  return {
+    route: null,
+    completed: [],
+    answers: {},
+    diagnosticDone: false,
+    packDownloaded: false,
+    lastLessonId: null,
+    practiceNotes: [],
+    compilerModuleAnswer: null,
+    compilerModuleCompleted: false
+  };
 }
 
 export function getSuggestedRoute(answers) {
@@ -22,7 +32,21 @@ export function normalizeState(value) {
     diagnosticDone: state.diagnosticDone === true,
     packDownloaded: state.packDownloaded === true,
     lastLessonId: validIds.has(state.lastLessonId) ? state.lastLessonId : null,
-    practiceNotes: normalizePracticeNotes(state.practiceNotes)
+    practiceNotes: normalizePracticeNotes(state.practiceNotes),
+    compilerModuleAnswer: ["identifier", "operator", "keyword"].includes(state.compilerModuleAnswer) ? state.compilerModuleAnswer : null,
+    compilerModuleCompleted: state.compilerModuleCompleted === true && state.compilerModuleAnswer === "operator"
+  };
+}
+
+export function answerCompilerQuestion(state, answer) {
+  const normalized = normalizeState(state);
+  if (normalized.compilerModuleCompleted) return normalized;
+  const validAnswers = new Set(["identifier", "operator", "keyword"]);
+  const selected = validAnswers.has(answer) ? answer : null;
+  return {
+    ...normalized,
+    compilerModuleAnswer: selected,
+    compilerModuleCompleted: normalized.compilerModuleCompleted || selected === "operator"
   };
 }
 
