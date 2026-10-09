@@ -37,7 +37,7 @@ Deliver a working mobile-first PWA proof of concept with a general course catalo
 - module-compiler.html teaches lexical analysis and tokens using an original summary and exercise grounded in the supplied MIVA CSC 408 course PDF. The PDF's reuse license is not stated; source pages not converted to interactive content are labeled as reading references.
 - service-worker.js precaches the app pages and their required assets; the FastAPI lesson pack is a separate cache download.
 - Static files and the small /api/admin/* authentication functions can be deployed on Vercel without a framework build. A shared production admin catalog is deferred until a persistent data store is added; stronger public account security should add rate limiting or a hosted identity provider.
-- server.mjs serves the app locally using Node's built-in HTTP modules.
+- dev-server.mjs serves the app locally using Node's built-in HTTP modules. It is named separately so Vercel treats the root as static assets plus `/api` functions.
 - FastAPI progress, sample module completion, and API Studio practice notes are stored together in IndexedDB and remain on the learner's device.
 
 ## Validation
