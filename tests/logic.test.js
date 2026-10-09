@@ -158,9 +158,27 @@ test("Miva catalogue includes 38 programmes across six schools and three study l
 test("Miva Computer Science exposes 56 linked course titles across eight levels and semesters", () => {
   const course = PROGRAMMES.find((programme) => programme.id === "miva-computer-science");
   const groups = getCourseSchedule(course.id, "weeks");
-  assert.equal(groups.length, 8);
-  assert.equal(groups.reduce((total, group) => total + group.items.length, 0), 56);
-  assert.ok(groups.flatMap((group) => group.items).every((item) => item.type === "Official curriculum reference" && item.href === course.officialUrl));
+  const semesters = groups.filter((group) => /Level · Semester/.test(group.title));
+  const curriculumItems = semesters.flatMap((group) => group.items);
+  const videoItems = groups.flatMap((group) => group.items).filter((item) => item.type === "Optional external video course");
+  assert.equal(semesters.length, 8);
+  assert.equal(curriculumItems.length, 56);
+  assert.ok(curriculumItems.every((item) => item.type === "Official curriculum reference" && item.href === course.officialUrl));
+  assert.equal(videoItems.length, 1);
+  assert.ok(videoItems[0].sourceLicense.includes("Proprietary"));
+});
+
+test("selected Miva learning spaces include grouped, clearly labeled external video resources", () => {
+  const videoProgrammes = ["miva-cybersecurity", "miva-data-science", "miva-artificial-intelligence", "miva-business-management", "miva-entrepreneurship", "miva-mass-communication", "miva-educational-technology"];
+  for (const id of videoProgrammes) {
+    const course = PROGRAMMES.find((programme) => programme.id === id);
+    const weeks = getCourseSchedule(id, "weeks").flatMap((group) => group.items);
+    const sessions = getCourseSchedule(id, "sessions").flatMap((group) => group.items);
+    const videos = weeks.filter((item) => item.type === "Optional external video course");
+    assert.ok(videos.length > 0, id);
+    assert.ok(videos.every((item) => item.href.startsWith("https://www.udemy.com/") && item.sourceLicense.includes("Proprietary")), id);
+    assert.deepEqual(sessions.map((item) => item.moduleKey).sort(), weeks.map((item) => item.moduleKey).sort(), course.title);
+  }
 });
 
 test("admin catalog saves only local source-linked courses and supports portable JSON backups", () => {

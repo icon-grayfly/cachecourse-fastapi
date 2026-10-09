@@ -16,7 +16,8 @@ Deliver a working mobile-first PWA proof of concept with a general course catalo
 10. Repository guidance, architecture notes, unit tests, and a browser-based offline demonstration.
 11. A directory of 38 Miva programmes across six schools and three study levels; the published Computer Science outline is represented by 56 linked course-title references across eight level/semester groups.
 12. A local admin console for course/material CRUD plus JSON backup and restore. It does not publish to a shared catalogue or use accounts.
-13. Two optional, proprietary Udemy FastAPI links are identified as online-only resources that may require paid access.
+13. Optional proprietary Udemy video links are grouped into relevant computing, business, communications, and education programme pages and marked as third-party online-only extras that may require paid access.
+14. The home page links directly to the browser-local admin console and clearly does not claim a super-admin login.
 
 ## Architecture
 - Static multi-page HTML, CSS, and browser-native JavaScript keep the first download small and avoid a build step. Ordinary same-tab links make every header item a distinct document.
@@ -40,7 +41,7 @@ Deliver a working mobile-first PWA proof of concept with a general course catalo
 
 ## Validation
 - Node's built-in test runner covers diagnostic routing, route choice, lesson completion, opportunity unlocking, API route matching, body validation, and note persistence rules.
-- Node tests also check the Miva programme counts and Computer Science outline, external Udemy attribution, and local admin catalog save/delete/JSON transfer behavior.
+- Node tests also check the Miva programme counts and Computer Science outline, grouped external Udemy videos, and local admin catalog save/delete/JSON transfer behavior.
 - Browser verification covers first-load pack download, same-tab navigation, offline refresh of every page, challenge feedback, and persisted progress.
 - Browser verification checks API Studio request/response flows, locally saved notes, and the CSC 408 module quiz/completion after a network-disabled refresh.
 - Measure the actual lesson payload before quoting a download-size target.

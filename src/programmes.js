@@ -53,6 +53,42 @@ const csCurriculum = [
   ["400 Level · Semester 2", ["Ethical and Legal Issues in Computer Science", "Machine Learning", "Human Computer Interaction", "Final Year Project II", "Compiler Construction", "Cloud Computing Security"]]
 ];
 
+const optionalVideos = {
+  "computer-science": [{ id: "fastapi-complete", title: "FastAPI - The Complete Course 2026", detail: "Optional backend API video extension for learners who want guided practice beyond the public Computer Science course-title outline.", duration: "21h 28m · Udemy", href: "https://www.udemy.com/course/fastapi-the-complete-course/", source: "Udemy · Eric Roby and Chad Darby" }],
+  "cybersecurity": [{ id: "cybersecurity-fundamentals", title: "Cybersecurity Fundamentals: Key Concepts and Strategies", detail: "Third-party introductory video course. Review its outline and practice safely in authorized environments only.", duration: "2h 52m · Udemy", href: "https://www.udemy.com/course/cybersecurity-fundamentals-key-concepts-and-strategies/", source: "Udemy · Doğaç Artem" }],
+  "data-science": [{ id: "machine-learning-az", title: "Machine Learning A-Z [2026]: ML, DL, AI with AWS, Python & R", detail: "Optional long-form video course that introduces supervised and unsupervised machine-learning workflows.", duration: "49h 14m · Udemy", href: "https://www.udemy.com/course/machinelearning/", source: "Udemy · Kirill Eremenko, Hadelin de Ponteves, SuperDataScience Team and Ligency" }],
+  "artificial-intelligence": [{ id: "machine-learning-az", title: "Machine Learning A-Z [2026]: ML, DL, AI with AWS, Python & R", detail: "Optional long-form video course that introduces supervised and unsupervised machine-learning workflows.", duration: "49h 14m · Udemy", href: "https://www.udemy.com/course/machinelearning/", source: "Udemy · Kirill Eremenko, Hadelin de Ponteves, SuperDataScience Team and Ligency" }],
+  "software-engineering": [{ id: "fastapi-complete", title: "FastAPI - The Complete Course 2026", detail: "Optional backend API video extension covering FastAPI projects and deployment topics.", duration: "21h 28m · Udemy", href: "https://www.udemy.com/course/fastapi-the-complete-course/", source: "Udemy · Eric Roby and Chad Darby" }],
+  "information-technology": [{ id: "cybersecurity-fundamentals", title: "Cybersecurity Fundamentals: Key Concepts and Strategies", detail: "Optional introductory video course about cybersecurity concepts, common threats, and defensive practice.", duration: "2h 52m · Udemy", href: "https://www.udemy.com/course/cybersecurity-fundamentals-key-concepts-and-strategies/", source: "Udemy · Doğaç Artem" }],
+  "business-management": [{ id: "business-management-entrepreneurship", title: "Diploma Course in Business Management and Entrepreneurship", detail: "Optional third-party video material covering management, leadership, strategy, and entrepreneurship topics.", duration: "10h 58m · Udemy", href: "https://www.udemy.com/course/diploma-in-management-and-entrepreneurship/", source: "Udemy · Aakaro Consulting" }],
+  "entrepreneurship": [{ id: "start-business-idea", title: "Entrepreneurship: How To Start A Business From An Idea", detail: "Optional on-demand video course about moving from an initial business idea toward research and a plan.", duration: "Udemy video · check current listing", href: "https://www.udemy.com/course/how-to-start-a-business-go-from-business-idea-to-a-business/", source: "Udemy · Alex Genadinik" }],
+  "mass-communication": [{ id: "digital-marketing", title: "The Ultimate Digital Marketing Course 2026: 11 Courses in 1", detail: "Optional digital-marketing video extension related to audience research, online publishing, and promotion.", duration: "Udemy video · check current listing", href: "https://www.udemy.com/course/the-ultimate-digital-marketing-course/", source: "Udemy · Joshua George and ClickSlice Ltd" }],
+  "educational-technology": [{ id: "instructional-designer", title: "The Complete Instructional Designer Course", detail: "Optional video course introducing learning needs analysis, instructional design, and portfolio development.", duration: "5h 59m · Udemy", href: "https://www.udemy.com/course/online-course-creation-introduction-to-instructional-design/", source: "Udemy · John Hinchliffe" }]
+};
+
+function videoItem(resource) {
+  return {
+    moduleKey: "resource:udemy:" + resource.id,
+    title: resource.title,
+    detail: resource.detail,
+    duration: resource.duration,
+    type: "Optional external video course",
+    href: resource.href,
+    source: resource.source,
+    sourceLicense: "Proprietary course · CacheCourse links only",
+    sourceCheckedAt: "9 Oct 2026",
+    access: "Online · may require a Udemy account and paid enrolment"
+  };
+}
+
+function optionalVideoViews(slug) {
+  const videos = optionalVideos[slug] || [];
+  return {
+    weeks: videos.length ? [{ title: "Optional video resources", subtitle: "Third-party on-demand classes · supplementary, not Miva syllabus material", items: videos.map(videoItem) }] : [],
+    sessions: videos.map((video) => ({ title: "Video session · " + video.title, subtitle: "Suggested flexible session · external video and internet access required", items: [videoItem(video)] }))
+  };
+}
+
 function curriculumViews(id, url) {
   if (id !== "computer-science") return null;
   const groups = csCurriculum.map(([title, courseTitles], levelIndex) => ({
@@ -71,7 +107,8 @@ function curriculumViews(id, url) {
       access: "Online source"
     }))
   }));
-  return { weeks: groups, sessions: groups };
+  const videos = optionalVideoViews(id);
+  return { weeks: [...groups, ...videos.weeks], sessions: [...groups, ...videos.sessions] };
 }
 
 export const PROGRAMMES = definitions.map(([slug, title, department, qualification, code, description, officialUrl]) => {
@@ -89,8 +126,8 @@ export const PROGRAMMES = definitions.map(([slug, title, department, qualificati
     access: "Online source"
   };
   const standardViews = {
-    weeks: [{ title: "Programme overview", subtitle: "Miva programme listing · external access required", items: [module] }],
-    sessions: [{ title: "Programme overview", subtitle: "Miva programme listing · external access required", items: [module] }]
+    weeks: [{ title: "Programme overview", subtitle: "Miva programme listing · external access required", items: [module] }, ...optionalVideoViews(slug).weeks],
+    sessions: [{ title: "Programme overview", subtitle: "Miva programme listing · external access required", items: [module] }, ...optionalVideoViews(slug).sessions]
   };
   return {
     id,

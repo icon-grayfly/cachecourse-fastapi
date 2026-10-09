@@ -14,6 +14,8 @@ npm run dev
 
 Open http://localhost:4173. Use the header links to move between pages in the same tab. Service Workers require a secure context; localhost is supported by browsers for local development.
 
+If a preview at port 4173 still shows the old two-card Learning Hub, stop its running server with `Ctrl+C`, start `npm run dev` from this repository folder, then reload the page. The PWA caches page files, so a private window is a quick way to confirm the refreshed build without disturbing saved learner progress or local admin entries.
+
 ## Use the offline pathway
 
 1. Open the app while connected.
@@ -30,7 +32,9 @@ Open http://localhost:4173. Use the header links to move between pages in the sa
 
 The Miva directory reflects 38 programmes visible in Miva’s public programme catalogue, grouped under its six schools and study levels. Miva’s public BSc Computer Science curriculum lists 56 course titles across eight level/semester groups; CacheCourse presents those as linked source references, not as CacheCourse lessons. Other Miva programme cards link to official pages and do not claim to contain complete syllabi.
 
-Open **Manage courses** from the Learning Hub to add, edit, or delete local courses and source-linked materials. Course metadata includes provider, school or department, qualification, level, category, and format. Material entries can be grouped into weeks or sections and record their source, access conditions, licence note, and last-checked date. The console supports JSON export/import for backups.
+Click **Open admin console** on the home page, or **Manage courses** in the Learning Hub, to add, edit, or delete local courses and source-linked materials. The direct local route is `/admin.html`. Course metadata includes provider, school or department, qualification, level, category, and format. Material entries can be grouped into weeks or sections and record their source, access conditions, licence note, and last-checked date. The console supports JSON export/import for backups.
+
+There is no super-admin login configured in this prototype. The admin button opens a local authoring console with no server-side access control; do not treat it as a protected production admin system. Some Miva programme pages also include carefully labeled Udemy video-course links for computing, business, communications, and education topics. Those are optional third-party extras, not Miva course requirements, and may require paid enrolment.
 
 Admin-added catalog entries are stored in this browser’s `localStorage`. There are no admin accounts, shared writes, or server-side database in this prototype. On a public deployment, each visitor gets a separate local catalogue. Use the source-link fields for materials; do not upload copyrighted course files or describe paid course links as offline content. The two Udemy links in the FastAPI pathway are optional, proprietary, online-only extensions and may require paid enrolment.
 
@@ -46,7 +50,7 @@ The static deployment is suitable for the public proof of concept. Admin edits s
 npm test
 ~~~
 
-The unit tests cover pathway and API behavior, CSC 408 sample completion, the 38-programme catalogue, the 56-title Computer Science outline, Udemy resource labeling, and local catalogue save/import/export behavior. They do not replace the browser-based Service Worker offline check.
+The unit tests cover pathway and API behavior, CSC 408 sample completion, the 38-programme catalogue, the 56-title Computer Science outline, grouped video-resource labels, and local catalogue save/import/export behavior. They do not replace the browser-based Service Worker offline check.
 
 ## API Studio
 

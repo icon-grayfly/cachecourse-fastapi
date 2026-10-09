@@ -247,7 +247,7 @@ function renderCourse() {
   }
   $("#course-actions").innerHTML = actionMarkup;
   const sourceMessage = course.kind === "programme"
-    ? "This entry is a programme directory record, not a Miva transcript or a CacheCourse qualification. The Computer Science outline lists public course titles; other programmes link to their official information."
+    ? "This entry is a programme directory record, not a Miva transcript or a CacheCourse qualification. The Computer Science outline lists public course titles; optional video links in selected programmes are third-party extras, not Miva syllabus material."
     : course.kind === "local-course"
       ? "This course and its source links were added in the local admin console. They are saved only in this browser. Check each linked source for its current access and reuse terms."
       : course.id === "csc408"
