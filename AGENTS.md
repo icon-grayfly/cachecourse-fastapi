@@ -10,6 +10,7 @@
 - Cache the app shell and lesson pack with the Service Worker and Cache API.
 - Store answers, route preference, and completion state on-device in IndexedDB.
 - Do not add accounts, analytics, or network transmission of learner progress without an explicit product decision.
+- Administrator sign-in for course authoring is explicitly approved. Keep it separate from learner accounts and progress; keep credentials server-side and never commit secrets.
 - Keep the app usable with keyboard and screen-reader navigation; use visible focus states and respect reduced-motion settings.
 
 ## Learning content

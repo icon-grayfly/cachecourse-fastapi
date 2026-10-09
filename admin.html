@@ -28,18 +28,32 @@
         </nav>
         <div class="topbar-actions">
           <div class="signal-pill" id="connection-status" role="status" aria-live="polite"><span class="signal-dot"></span><span id="connection-label">Checking connection</span></div>
+          <button class="button button-secondary admin-logout-button" id="admin-logout" type="button" hidden>Sign out</button>
           <button class="icon-button install-button" id="install-button" type="button" hidden aria-label="Install CacheCourse"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v9m0 0 3.5-3.5M10 11 6.5 7.5M3 12.5v3A1.5 1.5 0 0 0 4.5 17h11a1.5 1.5 0 0 0 1.5-1.5v-3"></path></svg></button>
         </div>
       </header>
 
       <main class="admin-page">
+        <section class="admin-login-card" id="admin-login" aria-labelledby="admin-login-title">
+          <div class="hub-kicker"><span class="hub-kicker-dot"></span> RESTRICTED AREA · ADMINISTRATOR SIGN-IN</div>
+          <h1 id="admin-login-title">Sign in to manage courses.</h1>
+          <p>Use the administrator credentials configured for this deployment. Your password is checked by the server and is not saved in this browser.</p>
+          <form id="admin-login-form" class="admin-login-form">
+            <label class="admin-field">Username<input id="admin-username" name="username" type="text" required maxlength="120" autocomplete="username" autocapitalize="none"></label>
+            <label class="admin-field">Password<input id="admin-password" name="password" type="password" required maxlength="500" autocomplete="current-password"></label>
+            <button class="button button-primary" id="admin-login-submit" type="submit">Sign in</button>
+            <p id="admin-login-status" class="admin-login-status" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <div id="admin-workspace" hidden>
         <nav class="course-breadcrumbs" aria-label="Breadcrumb"><a href="/learning-hub.html">Learning Hub</a><span aria-hidden="true">/</span><span>Admin console</span></nav>
         <section class="admin-hero">
           <div><div class="hub-kicker"><span class="hub-kicker-dot"></span> CATALOG MANAGEMENT · PROTOTYPE</div><h1>Keep the learning catalogue growing.</h1><p>Add a course with its department, study level, category, and source-linked materials. Materials are grouped into sections in the course workspace.</p></div>
           <a class="button button-secondary" href="/learning-hub.html">Browse Learning Hub <span aria-hidden="true">→</span></a>
         </section>
 
-        <aside class="admin-storage-note" role="note"><span class="hub-note-icon" aria-hidden="true">i</span><p><strong>This admin console saves to this browser only.</strong> It has no account system or shared database. Your local courses appear in this browser’s Learning Hub. Use Export / Import to move a backup; each import merges entries by ID. On a public Vercel site, each learner’s browser gets its own separate admin catalogue.</p></aside>
+        <aside class="admin-storage-note" role="note"><span class="hub-note-icon" aria-hidden="true">i</span><p><strong>Sign-in is server-verified; catalogue edits are still stored in this browser only.</strong> They appear in this browser’s Learning Hub, not for every learner on a public Vercel deployment. Use Export / Import for a backup. A shared catalogue requires a persistent database.</p></aside>
 
         <section class="admin-layout" aria-label="Course management">
           <div class="admin-editor-card">
@@ -71,6 +85,7 @@
             <ul id="local-course-list" class="admin-course-list"></ul>
           </aside>
         </section>
+        </div>
       </main>
       <footer class="page-footer"><span>CacheCourse <span class="footer-dot">●</span> A focused learning prototype</span><span>Course data stays in this browser.</span></footer>
     </div>

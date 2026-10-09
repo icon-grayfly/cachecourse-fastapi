@@ -1,4 +1,4 @@
-const CACHE_NAME = "cachecourse-shell-v8";
+const CACHE_NAME = "cachecourse-shell-v9";
 const PACK_CACHE = "cachecourse-lessons-v1";
 const SHELL = [
   "/",

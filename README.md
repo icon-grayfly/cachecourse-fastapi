@@ -8,6 +8,14 @@ CacheCourse is a dependency-free, offline-first learning PWA for online Computer
 
 Requirements: Node.js 20 or later. No package installation is required.
 
+For local admin sign-in, copy `.env.example` to `.env.local`, then set `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET`. Generate the session secret with:
+
+~~~powershell
+node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+~~~
+
+`.env.local` is ignored by Git. Never put the real credentials in a tracked file.
+
 ~~~powershell
 npm run dev
 ~~~
@@ -32,17 +40,19 @@ If a preview at port 4173 still shows the old two-card Learning Hub, stop its ru
 
 The Miva directory reflects 38 programmes visible in Miva’s public programme catalogue, grouped under its six schools and study levels. Miva’s public BSc Computer Science curriculum lists 56 course titles across eight level/semester groups; CacheCourse presents those as linked source references, not as CacheCourse lessons. Other Miva programme cards link to official pages and do not claim to contain complete syllabi.
 
-Click **Open admin console** on the home page, or **Manage courses** in the Learning Hub, to add, edit, or delete local courses and source-linked materials. The direct local route is `/admin.html`. Course metadata includes provider, school or department, qualification, level, category, and format. Material entries can be grouped into weeks or sections and record their source, access conditions, licence note, and last-checked date. The console supports JSON export/import for backups.
+Click **Open admin console** on the home page, or **Manage courses** in the Learning Hub, to open the protected `/admin.html` sign-in page. The server verifies credentials configured in environment variables, then issues an eight-hour, signed, HttpOnly, SameSite session cookie. Sign out clears the cookie. Course metadata includes provider, school or department, qualification, level, category, and format. Material entries can be grouped into weeks or sections and record their source, access conditions, licence note, and last-checked date. The console supports JSON export/import for backups.
 
-There is no super-admin login configured in this prototype. The admin button opens a local authoring console with no server-side access control; do not treat it as a protected production admin system. Some Miva programme pages also include carefully labeled Udemy video-course links for computing, business, communications, and education topics. Those are optional third-party extras, not Miva course requirements, and may require paid enrolment.
+Admin credentials are never stored in browser code or local storage. Configure them as server environment variables. For a public deployment, replace any credential that has been shared in chat with a unique, strong password. The sign-in is for one administrator; this prototype does not provide account recovery or multi-admin management.
 
-Admin-added catalog entries are stored in this browser’s `localStorage`. There are no admin accounts, shared writes, or server-side database in this prototype. On a public deployment, each visitor gets a separate local catalogue. Use the source-link fields for materials; do not upload copyrighted course files or describe paid course links as offline content. The two Udemy links in the FastAPI pathway are optional, proprietary, online-only extensions and may require paid enrolment.
+Admin-added catalog entries are still stored in this browser’s `localStorage`. The login protects the authoring flow, but it does not publish edits to every visitor; a shared catalog requires a persistent database and server-authorized write API. Use the source-link fields for materials; do not upload copyrighted course files or describe paid course links as offline content. Some Miva programme pages include carefully labeled Udemy video-course links as optional third-party extras, not Miva requirements; they may require paid enrolment.
 
 ## Deploy on Vercel
 
-Yes. The app is static HTML, CSS, and browser-native JavaScript, so Vercel can serve it without a framework build. Import the GitHub repository, use the repository root, select the **Other** framework preset, leave the build command empty, and set the output directory to `.` if Vercel asks for one. The Vercel deployment will not run `npm run dev`; that command is only for local development. HTTPS on the deployed domain enables the Service Worker.
+The app's HTML/CSS/JavaScript is static, and the three admin authentication routes are Node.js Vercel Functions under `api/admin/`. Vercel can serve this project without a frontend build. Import the GitHub repository with the repository root as the Root Directory, choose the **Other** framework preset, and leave the Build Command empty. The Vercel deployment will not run `npm run dev`; that command is only for local development. HTTPS on the deployed domain enables the Service Worker.
 
-The static deployment is suitable for the public proof of concept. Admin edits still live only in each browser; for one shared catalogue managed by authenticated admins, add a server API, authentication, and persistent database or storage before relying on it across users. Never put database credentials or write tokens in browser code.
+Before deploying, add `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` in **Vercel → Project → Settings → Environment Variables** for Production and Preview, then redeploy. Use a fresh, unique password and a random session secret (at least 32 characters); do not commit these values. Set the project's Production Branch to `master`. Once GitHub is connected, pushes to that branch trigger Production deployments and pushes to other branches create previews. Vercel Functions are deployed from the `/api` directory, and environment-variable changes apply to new deployments.
+
+The admin login can run on Vercel, but edits remain in the signed-in browser until a persistent shared database and admin-authorized write API are added. Never put database credentials or write tokens in browser code.
 
 ## Tests
 
@@ -50,7 +60,7 @@ The static deployment is suitable for the public proof of concept. Admin edits s
 npm test
 ~~~
 
-The unit tests cover pathway and API behavior, CSC 408 sample completion, the 38-programme catalogue, the 56-title Computer Science outline, grouped video-resource labels, and local catalogue save/import/export behavior. They do not replace the browser-based Service Worker offline check.
+The unit tests cover pathway and API behavior, CSC 408 sample completion, the 38-programme catalogue, the 56-title Computer Science outline, grouped video-resource labels, local catalog behavior, and admin session signing/expiry. They do not replace the browser-based Service Worker offline check.
 
 ## API Studio
 

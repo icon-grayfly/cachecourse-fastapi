@@ -1081,6 +1081,15 @@ a.schedule-item:hover .schedule-item-copy strong { color: #3d7650; text-decorati
 .course-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
 .admin-page { padding: 18px 0 44px; }
+.admin-login-card { max-width: 520px; margin: clamp(28px, 9vh, 88px) auto; padding: clamp(22px, 5vw, 36px); border: 1px solid #e0e6dc; border-radius: 19px; background: linear-gradient(135deg, #fffefa, #f4f7ef); box-shadow: 0 14px 40px rgba(30,55,47,0.07); }
+.admin-login-card h1 { margin: 8px 0 10px; color: var(--green); font: 500 clamp(28px, 4vw, 38px)/1.08 Georgia, "Times New Roman", serif; letter-spacing: -0.7px; }
+.admin-login-card > p { margin: 0 0 22px; color: #75827a; font-size: 12px; line-height: 1.65; }
+.admin-login-form { display: grid; grid-template-columns: 1fr; gap: 13px; }
+.admin-login-form .admin-field { font-size: 11px; }
+.admin-login-form .admin-field input { min-height: 44px; font-size: 14px; }
+.admin-login-form .button { justify-content: center; min-height: 43px; margin-top: 2px; }
+.admin-login-status { min-height: 16px; margin: 0; color: #8b5140; font-size: 11px; line-height: 1.5; }
+.admin-logout-button { min-height: 34px; padding: 7px 11px; font-size: 10px; }
 .admin-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 25px; padding: 27px 31px; border: 1px solid #e0e6dc; border-radius: 19px; background: linear-gradient(115deg, #f4f7ef, #faf9f2); }
 .admin-hero > div { max-width: 760px; }
 .admin-hero h1 { margin: 0; color: var(--green); font: 500 clamp(30px, 4vw, 42px)/1.05 Georgia, "Times New Roman", serif; letter-spacing: -1px; }
