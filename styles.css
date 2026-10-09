@@ -1068,3 +1068,84 @@ a.schedule-item:hover .schedule-item-copy strong { color: #3d7650; text-decorati
   .course-token-list li { grid-template-columns: 48px minmax(0, 1fr); gap: 7px; }
   .source-reading-card { padding: 13px; }
 }
+
+/* Expanded programme catalogue and local course administration */
+.hub-heading-actions { display: flex; align-items: center; gap: 15px; }
+.hub-admin-link { min-height: 38px; padding: 9px 12px; font-size: 10px; white-space: nowrap; }
+.hub-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; overflow: visible; padding: 13px 0; }
+.hub-select-label { display: grid; gap: 6px; color: #738177; font-size: 9px; font-weight: 760; letter-spacing: 0.04em; }
+.hub-select-label select { width: 100%; min-height: 39px; padding: 8px 10px; border: 1px solid #dfe5dc; border-radius: 9px; color: #43584b; background: #fffefa; font: inherit; font-size: 10px; letter-spacing: 0; }
+.hub-select-label select:focus-visible, .admin-field input:focus-visible, .admin-field select:focus-visible, .admin-field textarea:focus-visible { outline: 3px solid #e8a47e; outline-offset: 2px; }
+.course-tile-miva .course-tile-art { color: #d9e8cd; background: linear-gradient(135deg, #1b4038, #49664e); }
+.course-tile-programme .course-tile-mark { font-family: Georgia, "Times New Roman", serif; font-size: 34px; }
+.course-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.admin-page { padding: 18px 0 44px; }
+.admin-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 25px; padding: 27px 31px; border: 1px solid #e0e6dc; border-radius: 19px; background: linear-gradient(115deg, #f4f7ef, #faf9f2); }
+.admin-hero > div { max-width: 760px; }
+.admin-hero h1 { margin: 0; color: var(--green); font: 500 clamp(30px, 4vw, 42px)/1.05 Georgia, "Times New Roman", serif; letter-spacing: -1px; }
+.admin-hero p { margin: 10px 0 0; color: #75827a; font-size: 12px; line-height: 1.65; }
+.admin-storage-note { display: flex; align-items: flex-start; gap: 11px; margin: 15px 0 18px; padding: 14px 16px; border: 1px solid #eadccf; border-radius: 12px; background: #fff9f2; }
+.admin-storage-note p { margin: 1px 0 0; color: #756e64; font-size: 10px; line-height: 1.65; }
+.admin-storage-note strong { color: #4a564d; }
+.admin-layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(270px, 0.75fr); gap: 17px; align-items: start; }
+.admin-editor-card, .admin-collection-card { min-width: 0; padding: 21px; border: 1px solid #e2e6dc; border-radius: 15px; background: #fffefa; box-shadow: 0 8px 24px rgba(30,55,47,0.04); }
+.admin-section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; margin-bottom: 17px; }
+.admin-section-heading h2 { margin: 4px 0 0; color: var(--green); font: 500 24px/1.15 Georgia, "Times New Roman", serif; }
+.admin-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.admin-field { display: grid; align-content: start; gap: 6px; min-width: 0; color: #63746a; font-size: 9px; font-weight: 750; }
+.admin-field-wide { grid-column: 1 / -1; }
+.admin-field input, .admin-field textarea, .admin-field select { width: 100%; min-width: 0; min-height: 38px; padding: 9px 10px; border: 1px solid #dfe4da; border-radius: 8px; color: #2d4439; background: #fff; font: 400 11px/1.45 "Aptos", "Segoe UI", sans-serif; }
+.admin-field textarea { resize: vertical; }
+.admin-field input::placeholder, .admin-field textarea::placeholder { color: #a0aaa1; }
+.admin-material-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; margin: 24px 0 12px; padding-top: 18px; border-top: 1px solid #e9ece5; }
+.admin-material-heading h3 { margin: 4px 0 5px; color: #355441; font-size: 14px; }
+.admin-material-heading p { max-width: 520px; margin: 0; color: #859188; font-size: 9px; line-height: 1.5; }
+.admin-add-material { min-height: 35px; flex: 0 0 auto; padding: 8px 10px; font-size: 9px; }
+.admin-material-list { display: grid; gap: 11px; }
+.admin-material-card { position: relative; min-width: 0; margin: 0; padding: 18px 13px 13px; border: 1px solid #e4e8df; border-radius: 11px; background: #fafbf7; }
+.admin-material-card legend { padding: 0 5px; color: #66806d; font-size: 9px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; }
+.admin-remove-material { position: absolute; top: 6px; right: 8px; display: grid; width: 25px; height: 25px; place-items: center; border: 0; border-radius: 7px; color: #8e5e4d; background: #f7e9df; font-size: 17px; line-height: 1; }
+.admin-remove-material:hover { background: #f1d8c8; }
+.admin-form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 17px; }
+.admin-form-actions .button { min-height: 40px; padding: 10px 14px; }
+#admin-status { flex: 1 1 220px; color: #55715c; font-size: 10px; line-height: 1.45; }
+.admin-tools { display: flex; gap: 8px; }
+.admin-tools .button { min-height: 34px; padding: 8px 10px; font-size: 9px; }
+.admin-help { margin: 10px 0 13px; color: #89948b; font-size: 9px; line-height: 1.5; }
+.admin-count { display: grid; min-width: 27px; height: 27px; place-items: center; border-radius: 50%; color: #43654c; background: #edf3e9; font-size: 10px; font-weight: 800; }
+.admin-course-list { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.admin-course-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 9px; padding: 11px 0; border-top: 1px solid #ecefe8; }
+.admin-course-row > div:first-child { display: grid; gap: 3px; min-width: 0; }
+.admin-course-row strong { color: #3d5947; font-size: 10px; line-height: 1.4; }
+.admin-course-row span, .admin-course-row small { color: #859188; font-size: 8px; line-height: 1.4; }
+.admin-row-actions { display: flex; gap: 6px; flex: 0 0 auto; }
+.text-button.danger-text { color: #9a5a45; }
+.admin-empty-row { padding: 17px 12px; border: 1px dashed #dce3d9; border-radius: 9px; color: #879188; font-size: 9px; line-height: 1.5; list-style: none; }
+
+@media (min-width: 1200px) {
+  .course-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 980px) {
+  .admin-layout { grid-template-columns: minmax(0, 1fr); }
+  .admin-collection-card { order: -1; }
+}
+@media (max-width: 720px) {
+  .hub-heading-actions { align-items: flex-start; flex-direction: column; gap: 9px; }
+  .hub-section-heading { align-items: flex-start; }
+  .hub-filters { grid-template-columns: 1fr; }
+  .course-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+  .admin-hero { align-items: flex-start; flex-direction: column; padding: 22px; }
+  .admin-hero > .button { width: 100%; justify-content: center; }
+  .admin-editor-card, .admin-collection-card { padding: 16px; }
+  .admin-form-grid { grid-template-columns: 1fr; }
+  .admin-field-wide { grid-column: auto; }
+  .admin-material-heading { align-items: flex-start; flex-direction: column; }
+  .admin-add-material { width: 100%; justify-content: center; }
+}
+@media (max-width: 480px) {
+  .course-grid { grid-template-columns: 1fr; }
+  .admin-tools { flex-direction: column; }
+  .admin-tools .button { width: 100%; justify-content: center; }
+  .admin-course-row { flex-direction: column; }
+}

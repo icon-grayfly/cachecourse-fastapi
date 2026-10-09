@@ -1,4 +1,5 @@
 import { LESSONS } from "./lessons.js";
+import { PROGRAMMES } from "./programmes.js";
 
 const lessonsById = new Map(LESSONS.map((lesson) => [lesson.id, lesson]));
 const lessonItems = (ids) => ids.map((id) => ({
@@ -82,16 +83,24 @@ export const COURSES = [
       weeks: [
         { title: "Suggested week 1 · Routing", subtitle: "A flexible starting sequence", items: lessonItems(["first-route", "path-params"]) },
         { title: "Suggested week 2 · Request data", subtitle: "A flexible practice sequence", items: lessonItems(["request-body", "validation"]) },
-        { title: "Suggested week 3 · Responses", subtitle: "A flexible practice sequence", items: lessonItems(["status-codes"]) }
+        { title: "Suggested week 3 · Responses", subtitle: "A flexible practice sequence", items: lessonItems(["status-codes"]) },
+        { title: "Optional video extensions", subtitle: "Udemy courses · external access, account, and possible payment required", items: [
+          { moduleKey: "resource:udemy-fastapi-complete", title: "FastAPI - The Complete Course 2026", detail: "A longer video course extending the pathway into databases, authentication, testing, and deployment.", duration: "21h 28m · Udemy", type: "External video course", href: "https://www.udemy.com/course/fastapi-the-complete-course/", source: "Udemy · Eric Roby and Chad Darby", sourceLicense: "Proprietary course · CacheCourse links only", sourceCheckedAt: "9 Oct 2026", access: "May require paid enrolment" },
+          { moduleKey: "resource:udemy-fastapi-rest", title: "Mastering REST APIs with FastAPI", detail: "An extended practical course covering testing, authentication, databases, and background tasks.", duration: "13h 32m · Udemy", type: "External video course", href: "https://www.udemy.com/course/rest-api-fastapi-python/", source: "Udemy · Jose Salvatierra", sourceLicense: "Proprietary course · CacheCourse links only", sourceCheckedAt: "9 Oct 2026", access: "May require paid enrolment" }
+        ] }
       ],
       sessions: [
         { title: "Study block 1 · Routing and URL data", subtitle: "Suggested 1-hour block · includes hands-on API Studio practice", items: lessonItems(["first-route", "path-params"]) },
         { title: "Study block 2 · JSON and validation", subtitle: "Suggested 1-hour block · includes hands-on API Studio practice", items: lessonItems(["request-body", "validation"]) },
-        { title: "Study block 3 · Response behavior", subtitle: "Suggested 1-hour block · includes hands-on API Studio practice", items: lessonItems(["status-codes"]) }
+        { title: "Study block 3 · Response behavior", subtitle: "Suggested 1-hour block · includes hands-on API Studio practice", items: lessonItems(["status-codes"]) },
+        { title: "Optional external video", subtitle: "Udemy · requires an internet connection and may require paid enrolment", items: [
+          { moduleKey: "resource:udemy-fastapi-complete", title: "FastAPI - The Complete Course 2026", detail: "An optional long-form extension to the short offline pathway.", duration: "21h 28m · Udemy", type: "External video course", href: "https://www.udemy.com/course/fastapi-the-complete-course/", source: "Udemy · Eric Roby and Chad Darby", sourceLicense: "Proprietary course · CacheCourse links only", sourceCheckedAt: "9 Oct 2026", access: "May require paid enrolment" },
+          { moduleKey: "resource:udemy-fastapi-rest", title: "Mastering REST APIs with FastAPI", detail: "An optional longer practical extension to the short offline pathway.", duration: "13h 32m · Udemy", type: "External video course", href: "https://www.udemy.com/course/rest-api-fastapi-python/", source: "Udemy · Jose Salvatierra", sourceLicense: "Proprietary course · CacheCourse links only", sourceCheckedAt: "9 Oct 2026", access: "May require paid enrolment" }
+        ] }
       ]
     }
   }
-];
+].concat(PROGRAMMES);
 
 export function getCourse(courseId) {
   return COURSES.find((course) => course.id === courseId) || null;
@@ -100,5 +109,5 @@ export function getCourse(courseId) {
 export function getCourseSchedule(courseId, view = "weeks") {
   const course = getCourse(courseId);
   if (!course || !["weeks", "sessions"].includes(view)) return [];
-  return course.views[view];
+  return course.views?.[view] || [];
 }

@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { LESSONS } from "../src/lessons.js";
 import { COURSES, getCourse, getCourseSchedule } from "../src/catalog.js";
+import { deleteLocalCourse, exportLocalCatalog, getCatalogCourse, getLocalCourses, importLocalCatalog, saveLocalCourse } from "../src/catalog-store.js";
+import { PROGRAMMES } from "../src/programmes.js";
 import { simulateRequest } from "../src/api-simulator.js";
 import { answerCompilerQuestion, completeLesson, createInitialState, getNextLesson, getSuggestedRoute, isOpportunityUnlocked, normalizeState, setRoute } from "../src/logic.js";
 
@@ -112,16 +114,19 @@ test("Learning Hub exposes real courses under distinct departments", () => {
   assert.equal(getCourse("csc408").department, "Computer Science");
   assert.equal(getCourse("fastapi").department, "Software Engineering");
   assert.equal(getCourse("unknown"), null);
-  assert.equal(COURSES.length, 2);
+  assert.equal(COURSES.filter((course) => course.kind !== "programme").length, 2);
 });
 
 test("FastAPI week and study-session views include every lesson once and in order", () => {
   const expected = LESSONS.map((lesson) => lesson.title);
   for (const view of ["weeks", "sessions"]) {
-    const actual = getCourseSchedule("fastapi", view).flatMap((group) => group.items.map((item) => item.title));
+    const actual = getCourseSchedule("fastapi", view).flatMap((group) => group.items.filter((item) => item.lessonId).map((item) => item.title));
     assert.deepEqual(actual, expected);
   }
-  assert.ok(getCourseSchedule("fastapi", "sessions").every((group) => group.subtitle.includes("1-hour block")));
+  assert.ok(getCourseSchedule("fastapi", "sessions").filter((group) => group.items.some((item) => item.lessonId)).every((group) => group.subtitle.includes("1-hour block")));
+  const udemy = getCourseSchedule("fastapi", "weeks").flatMap((group) => group.items).filter((item) => item.href?.includes("udemy.com"));
+  assert.equal(udemy.length, 2);
+  assert.ok(udemy.every((item) => item.sourceLicense.includes("Proprietary") && item.access.includes("paid")));
 });
 
 test("CSC 408 schedule distinguishes one interactive sample from unbuilt source-reading sections", () => {
@@ -138,5 +143,57 @@ test("course outline module identifiers are stable between week and study-sessio
     const keysByView = ["weeks", "sessions"].map((view) => getCourseSchedule(course.id, view).flatMap((group) => group.items.map((item) => item.moduleKey)));
     assert.deepEqual([...new Set(keysByView[0])].sort(), [...new Set(keysByView[1])].sort());
     assert.ok(keysByView.every((keys) => keys.every((key) => typeof key === "string" && key.length > 0)));
+  }
+});
+
+test("Miva catalogue includes 38 programmes across six schools and three study levels", () => {
+  assert.equal(PROGRAMMES.length, 38);
+  assert.equal(new Set(PROGRAMMES.map((programme) => programme.department)).size, 6);
+  assert.equal(PROGRAMMES.filter((programme) => programme.qualification === "Undergraduate").length, 24);
+  assert.equal(PROGRAMMES.filter((programme) => programme.qualification === "Masters").length, 10);
+  assert.equal(PROGRAMMES.filter((programme) => programme.qualification === "Doctoral").length, 4);
+  assert.ok(PROGRAMMES.every((programme) => programme.officialUrl.startsWith("https://")));
+});
+
+test("Miva Computer Science exposes 56 linked course titles across eight levels and semesters", () => {
+  const course = PROGRAMMES.find((programme) => programme.id === "miva-computer-science");
+  const groups = getCourseSchedule(course.id, "weeks");
+  assert.equal(groups.length, 8);
+  assert.equal(groups.reduce((total, group) => total + group.items.length, 0), 56);
+  assert.ok(groups.flatMap((group) => group.items).every((item) => item.type === "Official curriculum reference" && item.href === course.officialUrl));
+});
+
+test("admin catalog saves only local source-linked courses and supports portable JSON backups", () => {
+  const originalDescriptor = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+  const values = new Map();
+  Object.defineProperty(globalThis, "localStorage", {
+    configurable: true,
+    value: {
+      getItem: (key) => values.get(key) ?? null,
+      setItem: (key, value) => values.set(key, String(value))
+    }
+  });
+  try {
+    const course = {
+      id: "local-test-backend",
+      title: "Backend study links",
+      department: "Software Engineering",
+      level: "Beginner",
+      materials: [{ id: "material-1", title: "HTTP guide", section: "Week 1", href: "https://example.org/http", sourceLicense: "CC BY 4.0" }]
+    };
+    saveLocalCourse(course);
+    assert.equal(getLocalCourses().length, 1);
+    assert.equal(getCatalogCourse(course.id).views.weeks[0].title, "Week 1");
+    assert.throws(() => saveLocalCourse({ ...course, id: "local-invalid-url", materials: [{ title: "Unsafe", href: "javascript:alert(1)" }] }));
+
+    const backup = exportLocalCatalog();
+    deleteLocalCourse(course.id);
+    assert.equal(getLocalCourses().length, 0);
+    assert.deepEqual(importLocalCatalog(JSON.parse(backup)), { accepted: 1, total: 1 });
+    assert.equal(getCatalogCourse(course.id).title, course.title);
+    assert.equal(COURSES.some((entry) => entry.id === course.id), false);
+  } finally {
+    if (originalDescriptor) Object.defineProperty(globalThis, "localStorage", originalDescriptor);
+    else delete globalThis.localStorage;
   }
 });

@@ -37,7 +37,7 @@
             <div class="hub-kicker"><span class="hub-kicker-dot"></span> LEARNING HUB · COURSES & TOOLS</div>
             <h1 id="hub-title">Find your next<br><span>learning space.</span></h1>
             <p>Browse by department, choose a course, and follow its material in the rhythm that works for you—week by week or one study block at a time.</p>
-            <label class="hub-search"><span class="sr-only">Search courses and departments</span><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"></circle><path d="m13 13 4 4"></path></svg><input id="course-search" type="search" placeholder="Search a course or department" autocomplete="off"></label>
+            <label class="hub-search"><span class="sr-only">Search programmes, courses, and materials</span><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"></circle><path d="m13 13 4 4"></path></svg><input id="course-search" type="search" placeholder="Search programmes, courses, or materials" autocomplete="off"></label>
           </div>
           <div class="hub-hero-panel" aria-label="Learning Hub overview">
             <div class="hub-book-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 13c10-3 18-1 24 4v36c-6-5-14-7-24-4V13Zm48 0c-10-3-18-1-24 4v36c6-5 14-7 24-4V13Z"></path></svg></div>
@@ -49,18 +49,18 @@
 
         <section class="hub-catalog" aria-labelledby="catalog-title">
           <div class="hub-section-heading">
-            <div><div class="section-kicker">EXPLORE THE COLLECTION</div><h2 id="catalog-title">Courses and pathways</h2></div>
-            <p id="course-count" class="hub-count" aria-live="polite">2 learning spaces</p>
+            <div><div class="section-kicker">EXPLORE THE COLLECTION</div><h2 id="catalog-title">Programmes, courses and pathways</h2></div>
+            <div class="hub-heading-actions"><p id="course-count" class="hub-count" aria-live="polite">Loading the catalogue…</p><a class="button button-secondary hub-admin-link" href="/admin.html">Manage courses <span aria-hidden="true">↗</span></a></div>
           </div>
-          <div class="hub-filters" role="group" aria-label="Filter by department">
-            <button class="hub-filter is-selected" type="button" data-department="all" aria-pressed="true">All learning spaces <span>02</span></button>
-            <button class="hub-filter" type="button" data-department="Computer Science" aria-pressed="false">Computer Science</button>
-            <button class="hub-filter" type="button" data-department="Software Engineering" aria-pressed="false">Software Engineering</button>
+          <div class="hub-filters" aria-label="Filter the catalogue">
+            <label class="hub-select-label">School or department<select id="department-filter"><option value="all">All schools and departments</option></select></label>
+            <label class="hub-select-label">Study level<select id="level-filter"><option value="all">All study levels</option><option value="Undergraduate">Undergraduate</option><option value="Masters">Masters</option><option value="Doctoral">Doctoral</option><option value="Skills pathway">Skills pathways</option></select></label>
+            <label class="hub-select-label">Category<select id="category-filter"><option value="all">All categories</option><option value="Academic programme">Academic programmes</option><option value="Course">Courses</option><option value="Skills pathway">Skills pathways</option><option value="Resource collection">Resource collections</option></select></label>
           </div>
-          <div class="hub-results-heading"><span id="results-label">Featured learning spaces</span><span>Updated as modules are added</span></div>
+          <div class="hub-results-heading"><span id="results-label">Featured learning spaces</span><span>Programme listings and learning materials are clearly identified</span></div>
           <div class="course-grid" id="course-grid" aria-live="polite"></div>
           <p class="hub-empty" id="course-empty" hidden>No courses match that search yet. Try a different title or department.</p>
-          <aside class="hub-note"><span class="hub-note-icon" aria-hidden="true">i</span><p>This is a growing proof of concept. Course previews identify source reading separately from interactive modules, so learners can see what is ready and what is still being built.</p></aside>
+          <aside class="hub-note"><span class="hub-note-icon" aria-hidden="true">i</span><p>The Miva programme directory reflects its public catalogue, not a claim that CacheCourse contains every official syllabus. Where a course outline is linked, we label source references separately from interactive lessons. External resources may require a connection or payment.</p></aside>
         </section>
       </main>
       <footer class="page-footer"><span>CacheCourse <span class="footer-dot">●</span> A focused learning prototype</span><span>Made for learning between connections.</span></footer>

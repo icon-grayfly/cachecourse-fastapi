@@ -1,11 +1,12 @@
 import { LESSONS } from "./lessons.js";
 import { getCourse, getCourseSchedule } from "./catalog.js";
+import { getCatalogCourse } from "./catalog-store.js";
 import { answerCompilerQuestion, completeLesson, createInitialState, normalizeState } from "./logic.js";
 import { loadProgress, saveProgress } from "./storage.js";
 
 const $ = (selector) => document.querySelector(selector);
 const courseId = new URLSearchParams(window.location.search).get("course");
-const course = getCourse(courseId);
+const course = getCatalogCourse(courseId) || getCourse(courseId);
 const outline = $("#course-outline");
 const content = $("#course-learning-content");
 const viewButtons = [...document.querySelectorAll(".schedule-view")];
@@ -17,8 +18,12 @@ function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 }
 
-function allItems(schedule = getCourseSchedule(course.id, selectedView)) {
+function allItems(schedule = scheduleFor()) {
   return schedule.flatMap((group) => group.items);
+}
+
+function scheduleFor(view = selectedView) {
+  return course?.views?.[view] || getCourseSchedule(course?.id, view);
 }
 
 function findItem(moduleKey) {
@@ -61,13 +66,13 @@ function renderMissingCourse() {
 }
 
 function renderOutline() {
-  const schedule = getCourseSchedule(course.id, selectedView);
+  const schedule = scheduleFor();
   outline.innerHTML = schedule.map((group) => {
     const groupSelected = selectedKey === sectionKey(group);
     const items = group.items.map((item) => {
       const selected = selectedKey === item.moduleKey;
       const complete = completionFor(item);
-      const status = complete ? "Complete" : item.lessonId || item.moduleKey === "csc408:tokens" ? "Practice" : "Reading";
+      const status = complete ? "Complete" : item.lessonId || item.moduleKey === "csc408:tokens" ? "Practice" : item.href ? "External" : "Reading";
       return '<button class="outline-module' + (selected ? ' is-selected' : '') + (complete ? ' is-complete' : '') + '" type="button" data-module-key="' + escapeHtml(item.moduleKey) + '" aria-pressed="' + String(selected) + '">' +
         '<span class="outline-module-state" aria-hidden="true">' + (complete ? '✓' : item.lessonId || item.moduleKey === "csc408:tokens" ? '○' : '·') + '</span>' +
         '<span class="outline-module-copy"><strong>' + escapeHtml(item.title) + '</strong><span>' + escapeHtml(item.duration) + ' · ' + status + '</span></span></button>';
@@ -83,6 +88,13 @@ function renderSection(group) {
 
 function renderSourceReference(item) {
   content.innerHTML = '<div class="course-content-heading"><div class="course-content-eyebrow">SOURCE READING · NOT AN INTERACTIVE MODULE</div><h2 id="learning-content-title">' + escapeHtml(item.title) + '</h2><p>' + escapeHtml(item.detail) + '</p></div><div class="source-reading-card"><div class="source-reading-mark" aria-hidden="true">PDF</div><div><div class="section-kicker">MIVA OPEN UNIVERSITY · CSC 408</div><h3>Continue with your supplied course summary</h3><p>This course companion does not include or redistribute the PDF. Open your own copy and go to <strong>' + escapeHtml(item.duration) + '</strong>. Interactive lessons will appear here as they are created and checked against the source.</p><p class="source-reading-license">Reuse terms are not stated in the supplied document. CacheCourse uses original explanations and does not reproduce its slides or passages.</p></div></div>';
+}
+
+function renderExternalMaterial(item) {
+  const title = item.source || "External source";
+  const access = item.access || "External source · connection required";
+  content.innerHTML = '<div class="course-content-heading"><div class="course-content-eyebrow">' + escapeHtml(item.type || "SOURCE-LINKED MATERIAL") + '</div><h2 id="learning-content-title">' + escapeHtml(item.title) + '</h2><p>' + escapeHtml(item.detail || "Open the source to read or view this material.") + '</p><div class="course-module-chips"><span>' + escapeHtml(item.duration || "Self-paced") + '</span><span>' + escapeHtml(access) + '</span></div></div>' +
+    '<section class="source-reading-card"><div class="source-reading-mark" aria-hidden="true">↗</div><div><div class="section-kicker">SOURCE DETAILS</div><h3>' + escapeHtml(title) + '</h3><p>' + escapeHtml(item.sourceLicense || "Terms not specified · check the source") + '</p>' + (item.sourceCheckedAt ? '<p class="source-reading-license">Last checked ' + escapeHtml(item.sourceCheckedAt) + '. This date records a link review, not a guarantee that access, pricing, or availability is unchanged.</p>' : '') + '<a class="button button-primary" href="' + escapeHtml(item.href) + '" target="_blank" rel="noopener noreferrer">Open source in a new tab <span aria-hidden="true">↗</span></a></div></section>';
 }
 
 function renderQuestion(options, selected, completed) {
@@ -185,7 +197,7 @@ function bindCompilerQuiz() {
 }
 
 function renderSelectedContent() {
-  const group = getCourseSchedule(course.id, selectedView).find((entry) => sectionKey(entry) === selectedKey);
+  const group = scheduleFor().find((entry) => sectionKey(entry) === selectedKey);
   if (group) {
     renderSection(group);
     return;
@@ -202,6 +214,8 @@ function renderSelectedContent() {
     renderFastApiLesson(item);
   } else if (item.moduleKey === "csc408:tokens") {
     renderCompilerLesson();
+  } else if (item.href) {
+    renderExternalMaterial(item);
   } else {
     renderSourceReference(item);
   }
@@ -221,13 +235,28 @@ function renderCourse() {
   $("#course-art").classList.add("course-art-" + course.accent);
   const nextLesson = LESSONS.find((lesson) => !learnerState.completed.includes(lesson.id));
   const actionHref = course.id === "fastapi"
-    ? "/course.html?course=fastapi&module=lesson%3A" + encodeURIComponent(nextLesson?.id || LESSONS[0].id) + "#course-workspace"
-    : "/course.html?course=csc408&module=csc408%3Atokens#course-workspace";
-  $("#course-actions").innerHTML = '<a class="button button-primary" href="' + actionHref + '">' + (course.id === "fastapi" && learnerState.completed.length ? "Continue learning" : "Start learning") + ' <span aria-hidden="true">→</span></a>' + (course.id === "fastapi" ? '<a class="course-secondary-link" href="/api-studio.html">Go to API Studio <span aria-hidden="true">↗</span></a>' : '<span class="course-action-note">1 short module ready</span>');
-  $("#course-source-note").innerHTML = '<div class="course-source-icon" aria-hidden="true">↳</div><div><div class="section-kicker">SOURCE & CONTENT STATUS</div><p><strong>' + escapeHtml(course.sourceNote) + '</strong> ' + (course.id === "csc408" ? "The interactive sample uses an original explanation and exercise. The document's reuse license is not stated; other sections remain source-reading references." : "Original lesson summaries link to official FastAPI documentation. Each reference and license note appears with its lesson.") + '</p></div><a href="/sources.html">Review source notes <span aria-hidden="true">→</span></a>';
+    ? "/course.html?course=fastapi&module=lesson%3A" + encodeURIComponent(nextLesson?.id || LESSONS[0].id)
+    : course.id === "csc408"
+      ? "/course.html?course=csc408&module=csc408%3Atokens#course-workspace"
+      : "/course.html?course=" + encodeURIComponent(course.id) + "&module=" + encodeURIComponent(firstModuleKey() || "") + "#course-workspace";
+  let actionMarkup;
+  if (course.kind === "programme") {
+    actionMarkup = '<a class="button button-primary" href="' + escapeHtml(course.officialUrl) + '" target="_blank" rel="noopener noreferrer">Open official Miva page <span aria-hidden="true">↗</span></a><a class="course-secondary-link" href="' + escapeHtml(course.catalogueUrl) + '" target="_blank" rel="noopener noreferrer">All Miva programmes <span aria-hidden="true">↗</span></a>';
+  } else {
+    actionMarkup = '<a class="button button-primary" href="' + actionHref + '#course-workspace">' + (course.id === "fastapi" && learnerState.completed.length ? "Continue learning" : "Start learning") + ' <span aria-hidden="true">→</span></a>' + (course.id === "fastapi" ? '<a class="course-secondary-link" href="/api-studio.html">Go to API Studio <span aria-hidden="true">↗</span></a>' : course.kind === "local-course" ? '<span class="course-action-note">Local source links · no interactive lessons yet</span>' : '<span class="course-action-note">1 short module ready</span>');
+  }
+  $("#course-actions").innerHTML = actionMarkup;
+  const sourceMessage = course.kind === "programme"
+    ? "This entry is a programme directory record, not a Miva transcript or a CacheCourse qualification. The Computer Science outline lists public course titles; other programmes link to their official information."
+    : course.kind === "local-course"
+      ? "This course and its source links were added in the local admin console. They are saved only in this browser. Check each linked source for its current access and reuse terms."
+      : course.id === "csc408"
+        ? "The interactive sample uses an original explanation and exercise. The document's reuse license is not stated; other sections remain source-reading references."
+        : "Original lesson summaries link to official FastAPI documentation. Udemy extensions link to external proprietary video courses and may require paid enrolment.";
+  $("#course-source-note").innerHTML = '<div class="course-source-icon" aria-hidden="true">↳</div><div><div class="section-kicker">SOURCE & CONTENT STATUS</div><p><strong>' + escapeHtml(course.sourceNote) + '</strong> ' + sourceMessage + '</p></div><a href="/sources.html">Review source notes <span aria-hidden="true">→</span></a>';
   $("#outline-description").textContent = selectedView === "weeks" ? "Browse the course section by section." : "Choose a focused block for your study time.";
   const firstValidKey = firstModuleKey();
-  if (!selectedKey || (!findItem(selectedKey) && !getCourseSchedule(course.id, selectedView).some((group) => sectionKey(group) === selectedKey))) selectedKey = firstValidKey;
+  if (!selectedKey || (!findItem(selectedKey) && !scheduleFor().some((group) => sectionKey(group) === selectedKey))) selectedKey = firstValidKey;
   renderOutline();
   renderSelectedContent();
 }
@@ -238,7 +267,7 @@ if (!course) {
   viewButtons.forEach((button) => button.addEventListener("click", () => {
     selectedView = button.dataset.view;
     $("#outline-description").textContent = selectedView === "weeks" ? "Browse the course section by section." : "Choose a focused block for your study time.";
-    if (!findItem(selectedKey) && !getCourseSchedule(course.id, selectedView).some((group) => sectionKey(group) === selectedKey)) selectedKey = firstModuleKey();
+    if (!findItem(selectedKey) && !scheduleFor().some((group) => sectionKey(group) === selectedKey)) selectedKey = firstModuleKey();
     renderOutline();
     renderSelectedContent();
     syncModuleUrl();

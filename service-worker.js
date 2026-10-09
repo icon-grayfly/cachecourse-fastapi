@@ -1,10 +1,11 @@
-const CACHE_NAME = "cachecourse-shell-v6";
+const CACHE_NAME = "cachecourse-shell-v7";
 const PACK_CACHE = "cachecourse-lessons-v1";
 const SHELL = [
   "/",
   "/index.html",
   "/api-studio.html",
   "/learning-hub.html",
+  "/admin.html",
   "/course.html",
   "/module-compiler.html",
   "/sources.html",
@@ -15,7 +16,10 @@ const SHELL = [
   "/src/app.js",
   "/src/api-studio-app.js",
   "/src/catalog.js",
+  "/src/programmes.js",
+  "/src/catalog-store.js",
   "/src/learning-hub.js",
+  "/src/admin.js",
   "/src/course-page.js",
   "/src/compiler-module-app.js",
   "/src/lessons.js",

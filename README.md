@@ -2,7 +2,7 @@
 
 FastAPI practice that keeps working when the connection drops.
 
-CacheCourse is a dependency-free, offline-first learning PWA for online Computer Science learners in Lagos. The Learning Hub organizes courses by department and opens a separate course page with week-based or suggested study-session views. The proof of concept includes a five-lesson FastAPI pathway, an offline API Studio, and a source-linked MIVA CSC 408 Compiler Construction sample. Progress and practice remain on-device.
+CacheCourse is a dependency-free, offline-first learning PWA for online Computer Science learners in Lagos. The Learning Hub includes 38 Miva Open University programme listings across six schools, with undergraduate, master’s, and doctoral filters. Miva’s public BSc Computer Science outline is organized into 56 course-title references across eight level/semester sections. The proof of concept also includes a five-lesson FastAPI pathway, optional external Udemy links, an offline API Studio, a source-linked MIVA CSC 408 sample, and a local admin console. Learner progress and admin-added catalogue entries remain on-device.
 
 ## Run locally
 
@@ -26,13 +26,27 @@ Open http://localhost:4173. Use the header links to move between pages in the sa
 8. Use browser developer tools to disable the network, then refresh and open each header page. Confirm cached pages, the downloaded FastAPI pack, the Learning Hub, course detail pages, the CSC 408 sample, and local API practice still work. External references and current opportunity availability require a connection.
 9. Progress, the sample lesson answer, and practice notes stay on this device.
 
+## Learning catalogue and admin console
+
+The Miva directory reflects 38 programmes visible in Miva’s public programme catalogue, grouped under its six schools and study levels. Miva’s public BSc Computer Science curriculum lists 56 course titles across eight level/semester groups; CacheCourse presents those as linked source references, not as CacheCourse lessons. Other Miva programme cards link to official pages and do not claim to contain complete syllabi.
+
+Open **Manage courses** from the Learning Hub to add, edit, or delete local courses and source-linked materials. Course metadata includes provider, school or department, qualification, level, category, and format. Material entries can be grouped into weeks or sections and record their source, access conditions, licence note, and last-checked date. The console supports JSON export/import for backups.
+
+Admin-added catalog entries are stored in this browser’s `localStorage`. There are no admin accounts, shared writes, or server-side database in this prototype. On a public deployment, each visitor gets a separate local catalogue. Use the source-link fields for materials; do not upload copyrighted course files or describe paid course links as offline content. The two Udemy links in the FastAPI pathway are optional, proprietary, online-only extensions and may require paid enrolment.
+
+## Deploy on Vercel
+
+Yes. The app is static HTML, CSS, and browser-native JavaScript, so Vercel can serve it without a framework build. Import the GitHub repository, use the repository root, select the **Other** framework preset, leave the build command empty, and set the output directory to `.` if Vercel asks for one. The Vercel deployment will not run `npm run dev`; that command is only for local development. HTTPS on the deployed domain enables the Service Worker.
+
+The static deployment is suitable for the public proof of concept. Admin edits still live only in each browser; for one shared catalogue managed by authenticated admins, add a server API, authentication, and persistent database or storage before relying on it across users. Never put database credentials or write tokens in browser code.
+
 ## Tests
 
 ~~~powershell
 npm test
 ~~~
 
-The unit tests cover pathway and API behavior, CSC 408 sample completion, and Learning Hub course grouping. They do not replace the browser-based Service Worker offline check.
+The unit tests cover pathway and API behavior, CSC 408 sample completion, the 38-programme catalogue, the 56-title Computer Science outline, Udemy resource labeling, and local catalogue save/import/export behavior. They do not replace the browser-based Service Worker offline check.
 
 ## API Studio
 
@@ -57,4 +71,6 @@ Lessons are original summaries linked to official FastAPI documentation. Each so
 - AGENTS.md: repository instructions for Codex and contributors.
 - PLAN.md: MVP boundaries, architecture, validation, and deferred features.
 - src/catalog.js: course metadata and week/session groupings.
+- src/programmes.js: Miva programme directory and public Computer Science course-title outline.
+- src/catalog-store.js and admin.html: local catalog editing and JSON backup/import.
 - tests/logic.test.js: deterministic pathway, API, course-module, and catalog behavior tests.
