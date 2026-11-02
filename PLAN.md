@@ -1,7 +1,7 @@
 # CacheCourse implementation plan
 
 ## Goal
-Deliver a working mobile-first PWA proof of concept with a general course catalog and distinct same-tab pages for a source-linked FastAPI pathway, a local API practice lab, a sample MIVA CSC 408 module, source notes, and a browser-local admin console. A learner can browse by school/department and level, choose a course, organize materials by weeks or sections, download the FastAPI lesson pack, complete local challenges offline, and keep progress across refreshes.
+Deliver a working mobile-first PWA proof of concept with a general learning Home page and platform-wide course search, a course catalog, distinct pages for a source-linked FastAPI pathway, a local API practice lab, a sample MIVA CSC 408 module, a Community page with ten in-page sector groups and source notes, and a server-authorized admin console. A learner can browse by school/department and level, choose a course, organize materials by weeks or sections, download the FastAPI lesson pack, complete local challenges offline, and keep progress across refreshes.
 
 ## MVP
 1. Five original, short lessons: first route, path parameters, request bodies, Pydantic models, and response status codes.
@@ -12,41 +12,53 @@ Deliver a working mobile-first PWA proof of concept with a general course catalo
 6. Offline API Studio that simulates GET and POST requests, path parsing, JSON validation, 200/201/404/405/422 outcomes, and a small locally saved notes collection.
 7. An original CSC 408 sample lesson on lexical analysis and token types, based on the supplied MIVA course summary, with an offline quiz and separately saved completion.
 8. Learning Hub catalog with search, department filters, course cards, and course detail pages. Each detail page has a left course outline; selecting sections or modules opens the selected content in the main workspace. Course pages can group materials by week or suggested study blocks and distinguish interactive material from source-reading references.
-9. Separate pages for the pathway, API Studio, Learning Hub, course details, the CSC 408 sample, and source notes; header links navigate among them in the same tab.
+9. Separate Home, API Studio, Learning Hub, course details, CSC 408 sample, and Community pages; Home introduces learning across fields and features the FastAPI pathway alongside other learning spaces, and Community retains source and license notes. Header links navigate among them in the same tab.
 10. Repository guidance, architecture notes, unit tests, and a browser-based offline demonstration.
 11. A directory of 38 Miva programmes across six schools and three study levels; the published Computer Science outline is represented by 56 linked course-title references across eight level/semester groups.
-12. An admin console for course/material CRUD plus JSON backup and restore. Server-verified admin sign-in uses environment credentials and an HttpOnly signed session cookie. Catalogue edits remain local to the admin's browser; they do not publish to a shared catalogue.
+12. A global-admin console with a color-pane module sidebar for activity dashboard, all users, communities/memberships, private admin inbox, learner study flow, and course/material authoring. The activity dashboard uses accessible SVG charts for daily anonymous visits, active learners, activity mix, and popular pages, with 20-second refresh while visible. Server-verified admin APIs use environment credentials and an HttpOnly signed session cookie; Supabase service-role access remains server-only. Course edits and JSON backup/restore remain local to the administrator's browser.
 13. Optional proprietary Udemy video links are grouped into relevant computing, business, communications, and education programme pages and marked as third-party online-only extras that may require paid access.
-14. The home page links to the admin sign-in page; the console stays hidden until the server verifies the admin session.
+14. The global admin sign-in is server-protected and omitted from public navigation, search indexing, and the offline shell cache.
+15. Community lists all ten career-sector groups, keeps unavailable database records visibly marked, and opens group routes in the same page. Joined groups have a colored module pane for Overview, Live chat, Members, and Direct messages. A signed-in learner may join one group immediately and request additional memberships for admin approval. Supabase enforces member-only group history/presence and provides saved messages, reports, blocking, moderator removal, and participant-only direct messages.
+16. Course cards and details can be saved to an on-device learning wishlist shown in the Learning Hub and Community profile. Learners can select weekly, monthly, or disabled in-app study reminders.
+17. Home search forwards course and topic queries to the searchable Learning Hub. Admin search filters user, community, and message records in the active module.
+18. Signed-in study-flow telemetry records page views, course views, and lesson completion after a clear notice. Learners can turn individual tracking off and erase recorded activity. Anonymous daily page totals contain no account, IP, or visitor identifiers.
+19. Learners can request an email password-reset link from the Log in form and set a new password on the Community page.
+20. Learners can upload or remove a profile photo. Supabase Storage keeps photos private and serves them only to the owner or signed-in members of a shared active community.
 
 ## Architecture
 - Static multi-page HTML, CSS, and browser-native JavaScript keep the first download small and avoid a build step. Ordinary same-tab links make every header item a distinct document.
 - src/logic.js contains pure route, challenge, completion, and unlock rules.
-- src/storage.js wraps IndexedDB; it does not send learner data to a server.
+- src/favorites.js and src/favorite-reminder.js manage the on-device course wishlist and configurable in-app reminders; learner preferences are not sent to Supabase.
+- src/storage.js wraps IndexedDB for lesson answers, route choice, local completion, and practice notes.
 - src/lessons.js contains original lesson content and source metadata.
 - src/catalog.js provides department/course metadata and schedule groupings; suggested study blocks are explicitly distinguished from formal timetables and lesson durations.
 - src/programmes.js holds the Miva public programme directory and the public Computer Science outline. Other programme entries link to official information; CacheCourse does not invent or claim complete syllabi for them.
 - src/catalog-store.js validates and normalizes local admin records, accepts http(s) source URLs, and keeps user-added courses in browser localStorage. JSON import/export is a manual backup path, not multi-user synchronization.
-- admin.html and src/admin.js provide a session-gated course/material editor for the current browser.
-- src/admin-auth.js issues and verifies signed, time-limited HttpOnly sessions using server environment credentials; /api/admin/* exposes sign-in, session-check, and sign-out routes for Vercel Functions and the local Node server.
+- admin.html and src/admin.js provide the session-gated multi-module global-admin console. Course/material authoring remains browser-local.
+- admin.html is deliberately omitted from public navigation, robots indexing, and the Service Worker shell cache. Its single administrator sign-in remains server-verified; the URL itself is not treated as a security control.
+- src/admin-auth.js issues and verifies signed, time-limited HttpOnly sessions using server environment credentials. src/admin-api.js uses server-only Supabase service-role credentials for user management, community membership moderation, admin messages, and activity reporting.
 - src/api-simulator.js contains deterministic request routing, validation, and synthetic response rules; it never executes learner code.
 - src/app.js, src/api-studio-app.js, and src/compiler-module-app.js render the individual learning pages and connect browser events to pure logic and storage.
 - src/shell.js shares install and connection behavior across pages.
 - learning-hub.html and src/learning-hub.js render the searchable, department-filtered course catalog.
+- src/activity-tracking.js records disclosed account-linked activity, supports learner opt-out and erasure, and counts anonymous page visits only as daily path totals.
 - course.html and src/course-page.js render course details with a persistent left outline, week/session grouping, direct in-page lesson navigation, offline challenges, and on-device progress.
 - module-compiler.html teaches lexical analysis and tokens using an original summary and exercise grounded in the supplied MIVA CSC 408 course PDF. The PDF's reuse license is not stated; source pages not converted to interactive content are labeled as reading references.
+- community.html presents ten professional-sector groups, preserves source, attribution, license, and opportunity availability notes, and includes optional Supabase chat; it does not represent Andela.
+- src/community-sectors.js defines the ten professional groups; src/community-chat.js renders all ten choices and same-page routes, in-community module navigation, password recovery, and member-only profile photos, and connects to Supabase Auth, Postgres, Storage, and Realtime using the browser-safe values served by /api/public-config.
+- supabase/migrations creates chat profiles, private profile-photo storage, persistent messages, ten sector groups, approval-based multiple memberships, private messages, blocks, reports, moderator permissions, learner activity, anonymous aggregate traffic, row-level security, rate limits, and Realtime policies. Core lesson answers and progress remain on-device; disclosed study-flow events are stored separately.
 - service-worker.js precaches the app pages and their required assets; the FastAPI lesson pack is a separate cache download.
-- Static files and the small /api/admin/* authentication functions can be deployed on Vercel without a framework build. A shared production admin catalog is deferred until a persistent data store is added; stronger public account security should add rate limiting or a hosted identity provider.
+- Static files and the /api/admin/* authentication/management functions can be deployed on Vercel without a framework build. Remote admin modules require a Supabase service-role key configured only in the server environment. A shared production course catalog remains deferred.
 - dev-server.mjs serves the app locally using Node's built-in HTTP modules. It is named separately so Vercel treats the root as static assets plus `/api` functions.
-- FastAPI progress, sample module completion, and API Studio practice notes are stored together in IndexedDB and remain on the learner's device.
+- FastAPI progress, sample module completion, and API Studio practice notes are stored together in IndexedDB and remain on the learner's device. Separate signed-in activity events are governed by the visible tracking controls.
 
 ## Validation
-- Node's built-in test runner covers diagnostic routing, route choice, lesson completion, opportunity unlocking, API route matching, body validation, note persistence rules, and admin credential/session validation, expiry, logout, and origin checks.
+- Node's built-in test runner covers diagnostic routing, route choice, lesson completion, opportunity unlocking, API route matching, body validation, note persistence rules, admin credential/session validation, protected management APIs, missing server credentials, and origin checks.
 - Node tests also check the Miva programme counts and Computer Science outline, grouped external Udemy videos, and local admin catalog save/delete/JSON transfer behavior.
-- Browser verification covers first-load pack download, same-tab navigation, offline refresh of every page, challenge feedback, and persisted progress.
+- Browser verification covers first-load pack download, same-tab navigation, offline refresh of every page including Community, challenge feedback, and persisted progress. Supabase group chat, DM delivery, membership approvals, and telemetry need live-project verification; Node unit tests do not establish database or Realtime behavior.
 - Browser verification checks API Studio request/response flows, locally saved notes, and the CSC 408 module quiz/completion after a network-disabled refresh.
 - Measure the actual lesson payload before quoting a download-size target.
 - Recheck the opportunity source and requirements before each public demo.
 
 ## Deferred
-- Shared server-side admin catalog, admin authentication, institutional LMS sync, real WhatsApp delivery, live job aggregation, arbitrary Python execution in-browser, and generative tutoring.
+- Shared server-side course catalog, institutional LMS sync, real WhatsApp delivery, live job aggregation, arbitrary Python execution in-browser, and generative tutoring.

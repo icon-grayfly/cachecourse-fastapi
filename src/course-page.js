@@ -3,6 +3,8 @@ import { getCourse, getCourseSchedule } from "./catalog.js";
 import { getCatalogCourse } from "./catalog-store.js";
 import { answerCompilerQuestion, completeLesson, createInitialState, normalizeState } from "./logic.js";
 import { loadProgress, saveProgress } from "./storage.js";
+import { loadLearningState, toggleCourseFavorite } from "./favorites.js";
+import { trackLearnerActivity } from "./activity-tracking.js";
 
 const $ = (selector) => document.querySelector(selector);
 const courseId = new URLSearchParams(window.location.search).get("course");
@@ -138,6 +140,7 @@ function bindFastApiQuiz(lesson) {
     }
     if (selected === lesson.answerId) {
       learnerState = completeLesson(learnerState, lesson.id, selected);
+      void trackLearnerActivity("lesson_complete", lesson.id, lesson.title);
       const saved = await saveProgress(learnerState);
       feedback.textContent = "Correct. " + lesson.feedback + " " + (saved ? "Completed and saved on this device." : "Completed for this session on this device.");
       form.querySelectorAll("input").forEach((input) => { input.disabled = true; });
@@ -159,7 +162,7 @@ function renderCompilerLesson() {
   content.innerHTML = '<div class="course-content-heading"><div class="course-content-eyebrow">CSC 408 · WEEKS 1–4 · 6 MIN</div><h2 id="learning-content-title">How source code becomes tokens</h2><p>A short sample on lexical analysis, based on page 2 of the supplied course summary.</p><div class="course-module-chips"><span>Interactive sample</span><span>Offline practice</span>' + (completed ? '<span class="completed-chip">Completed on this device</span>' : '') + '</div></div>' +
     '<div class="course-lesson-body"><p class="course-lesson-intro">A compiler’s lexical-analysis stage scans a source line from left to right. It groups characters into tokens—such as identifiers, operators, and number literals—so later stages can reason about the program’s structure.</p><section class="course-concept"><div class="section-kicker">THE IDEA</div><h3>First, group characters into meaningful pieces</h3><p>Tokenizing finds the pieces. Syntax analysis checks whether those pieces fit the language’s grammar.</p></section><div class="course-code-heading">A tiny line of code</div><pre class="course-code-block"><code>total = total + 1</code></pre><ol class="course-token-list"><li><code>total</code><span>identifier · a name in the program</span></li><li><code>=</code><span>assignment operator · gives the name a value</span></li><li><code>total</code><span>identifier · the existing value is read</span></li><li><code>+</code><span>operator · combines values by addition</span></li><li><code>1</code><span>integer literal · a number written directly</span></li></ol>' +
     '<section class="course-challenge"><div class="course-content-eyebrow">QUICK CHECK</div><h3>Name the token</h3><p>In <code>total = total + 1</code>, what kind of token is <code>+</code>?</p><form class="course-compiler-quiz"><fieldset class="course-question-options"><legend class="sr-only">Choose the token type</legend><label for="compiler-identifier" class="course-answer-option' + (selected === "identifier" ? ' is-checked' : '') + '"><input id="compiler-identifier" type="radio" name="course-compiler-answer" value="identifier"' + (selected === "identifier" ? ' checked' : '') + (completed ? ' disabled' : '') + '><span>Identifier</span></label><label for="compiler-operator" class="course-answer-option' + (selected === "operator" ? ' is-checked' : '') + '"><input id="compiler-operator" type="radio" name="course-compiler-answer" value="operator"' + (selected === "operator" ? ' checked' : '') + (completed ? ' disabled' : '') + '><span>Operator</span></label><label for="compiler-keyword" class="course-answer-option' + (selected === "keyword" ? ' is-checked' : '') + '"><input id="compiler-keyword" type="radio" name="course-compiler-answer" value="keyword"' + (selected === "keyword" ? ' checked' : '') + (completed ? ' disabled' : '') + '><span>Keyword</span></label></fieldset><div class="course-quiz-feedback' + (completed ? ' is-correct' : '') + '" role="status" aria-live="polite"' + (selected ? '' : ' hidden') + '>' + escapeHtml(completed ? "Correct. The plus sign is an operator token. Completed and saved on this device." : selected ? "Not quite. Token type describes a symbol’s role in the code. Try again." : "") + '</div><div class="course-quiz-actions"><span class="course-quiz-save">Answers stay on this device.</span><button class="button button-primary" type="submit"' + (completed ? ' disabled' : '') + '>' + (completed ? 'Completed' : 'Check answer') + '</button></div></form></section>' +
-    '<div class="course-lesson-source"><div><span>REFERENCE · MIVA CSC 408 Full Course Summary · Weeks 1–4, page 2</span><span>Original explanation and example · reuse license not stated in supplied document</span></div><a href="/sources.html">View source notes →</a></div></div>';
+    '<div class="course-lesson-source"><div><span>REFERENCE · MIVA CSC 408 Full Course Summary · Weeks 1–4, page 2</span><span>Original explanation and example · reuse license not stated in supplied document</span></div><a href="/community.html#sources">View sources and license notes →</a></div></div>';
   bindCompilerQuiz();
 }
 
@@ -245,7 +248,9 @@ function renderCourse() {
   } else {
     actionMarkup = '<a class="button button-primary" href="' + actionHref + '#course-workspace">' + (course.id === "fastapi" && learnerState.completed.length ? "Continue learning" : "Start learning") + ' <span aria-hidden="true">→</span></a>' + (course.id === "fastapi" ? '<a class="course-secondary-link" href="/api-studio.html">Go to API Studio <span aria-hidden="true">↗</span></a>' : course.kind === "local-course" ? '<span class="course-action-note">Local source links · no interactive lessons yet</span>' : '<span class="course-action-note">1 short module ready</span>');
   }
-  $("#course-actions").innerHTML = actionMarkup;
+  const isFavourite = learnerState.favorites.includes(course.id);
+  const favouriteAction = '<button class="button button-secondary course-favorite-toggle' + (isFavourite ? ' is-favorite' : '') + '" type="button" data-course-favorite aria-pressed="' + String(isFavourite) + '">' + (isFavourite ? '♥ Saved to learning list' : '♡ Add to favourites') + '</button>';
+  $("#course-actions").innerHTML = actionMarkup + favouriteAction + '<span class="course-favorite-status" id="course-favorite-status" role="status" aria-live="polite"></span>';
   const sourceMessage = course.kind === "programme"
     ? "This entry is a programme directory record, not a Miva transcript or a CacheCourse qualification. The Computer Science outline lists public course titles; optional video links in selected programmes are third-party extras, not Miva syllabus material."
     : course.kind === "local-course"
@@ -253,7 +258,7 @@ function renderCourse() {
       : course.id === "csc408"
         ? "The interactive sample uses an original explanation and exercise. The document's reuse license is not stated; other sections remain source-reading references."
         : "Original lesson summaries link to official FastAPI documentation. Udemy extensions link to external proprietary video courses and may require paid enrolment.";
-  $("#course-source-note").innerHTML = '<div class="course-source-icon" aria-hidden="true">↳</div><div><div class="section-kicker">SOURCE & CONTENT STATUS</div><p><strong>' + escapeHtml(course.sourceNote) + '</strong> ' + sourceMessage + '</p></div><a href="/sources.html">Review source notes <span aria-hidden="true">→</span></a>';
+  $("#course-source-note").innerHTML = '<div class="course-source-icon" aria-hidden="true">↳</div><div><div class="section-kicker">SOURCE & CONTENT STATUS</div><p><strong>' + escapeHtml(course.sourceNote) + '</strong> ' + sourceMessage + '</p></div><a href="/community.html#sources">Review sources <span aria-hidden="true">→</span></a>';
   $("#outline-description").textContent = selectedView === "weeks" ? "Browse the course section by section." : "Choose a focused block for your study time.";
   const firstValidKey = firstModuleKey();
   if (!selectedKey || (!findItem(selectedKey) && !scheduleFor().some((group) => sectionKey(group) === selectedKey))) selectedKey = firstValidKey;
@@ -264,6 +269,24 @@ function renderCourse() {
 if (!course) {
   renderMissingCourse();
 } else {
+  void trackLearnerActivity("course_view", course.id, course.title);
+  $("#course-actions").addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-course-favorite]");
+    if (!button) return;
+    button.disabled = true;
+    try {
+      learnerState = await toggleCourseFavorite(course.id);
+      const isFavourite = learnerState.favorites.includes(course.id);
+      button.classList.toggle("is-favorite", isFavourite);
+      button.setAttribute("aria-pressed", String(isFavourite));
+      button.textContent = isFavourite ? "♥ Saved to learning list" : "♡ Add to favourites";
+      $("#course-favorite-status").textContent = isFavourite ? "Saved on this device." : "Removed from your learning list.";
+    } catch (error) {
+      $("#course-favorite-status").textContent = error.message;
+    } finally {
+      button.disabled = false;
+    }
+  });
   viewButtons.forEach((button) => button.addEventListener("click", () => {
     selectedView = button.dataset.view;
     $("#outline-description").textContent = selectedView === "weeks" ? "Browse the course section by section." : "Choose a focused block for your study time.";
@@ -278,7 +301,7 @@ if (!course) {
     if (moduleButton) selectKey(moduleButton.dataset.moduleKey);
     else if (sectionButton) selectKey(sectionButton.dataset.sectionKey);
   });
-  loadProgress(createInitialState()).then((saved) => {
+  loadLearningState().then((saved) => {
     learnerState = normalizeState(saved);
     renderCourse();
   });

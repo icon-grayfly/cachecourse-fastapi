@@ -1,6 +1,7 @@
 import { LESSONS, OPPORTUNITY } from "./lessons.js";
 import { completeLesson, createInitialState, getNextLesson, getSuggestedRoute, isOpportunityUnlocked, normalizeState, setRoute } from "./logic.js";
 import { loadProgress, saveProgress } from "./storage.js";
+import { trackLearnerActivity } from "./activity-tracking.js";
 
 const $ = (selector) => document.querySelector(selector);
 const ui = {
@@ -13,7 +14,8 @@ const ui = {
   ringValue: $("#ring-value"), progressRing: $("#progress-ring"), savedStatus: $("#saved-status"),
   offlineCopy: $("#offline-card-copy"), opportunityCard: $("#opportunity-card"), opportunityLock: $("#opportunity-lock"),
   opportunityTitle: $("#opportunity-title"), opportunityDescription: $("#opportunity-description"),
-  opportunityMeta: $("#opportunity-meta"), opportunityLink: $("#opportunity-link"), opportunityFootnote: $("#opportunity-footnote"),
+  opportunityMeta: $("#opportunity-meta"), opportunityFreshness: $("#opportunity-freshness"),
+  opportunityLink: $("#opportunity-link"), opportunityFootnote: $("#opportunity-footnote"),
   diagnosticDialog: $("#diagnostic-dialog"), lessonDialog: $("#lesson-dialog"), toastRegion: $("#toast-region")
 };
 
@@ -87,6 +89,7 @@ function render() {
   ui.opportunityTitle.textContent = unlocked ? OPPORTUNITY.title : "Your next step is waiting.";
   ui.opportunityDescription.textContent = unlocked ? OPPORTUNITY.summary : "Complete the five foundations to reveal a locally relevant opportunity to explore.";
   ui.opportunityMeta.textContent = unlocked ? OPPORTUNITY.location + " · Checked " + OPPORTUNITY.checkedAt : "FastAPI foundations · Lagos";
+  ui.opportunityFreshness.textContent = "Saved example · last checked " + OPPORTUNITY.checkedAt + ". Confirm current availability on the employer’s page.";
   ui.opportunityLink.hidden = !unlocked;
   ui.opportunityFootnote.textContent = unlocked ? "Availability may change. This milestone is not a job guarantee." : "A learning milestone is a next step, not a job guarantee.";
   ui.download.classList.toggle("is-saved", state.packDownloaded);
@@ -172,6 +175,7 @@ function openLesson(lesson) {
     form.querySelectorAll("input").forEach((input) => { input.disabled = true; });
     form.querySelector(".challenge-submit").disabled = true;
     state = completeLesson(state, lesson.id, selected);
+    void trackLearnerActivity("lesson_complete", lesson.id, lesson.title);
     const durable = await persist();
     render();
     if (!durable) toast("Saved for this session. Browser storage was unavailable.");
@@ -210,6 +214,15 @@ async function downloadPack() {
 }
 
 function wireEvents() {
+  document.querySelector("#home-search-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const query = document.querySelector("#home-search").value.trim();
+    if (!query) {
+      document.querySelector("#home-search").focus();
+      return;
+    }
+    window.location.href = "/learning-hub.html?q=" + encodeURIComponent(query);
+  });
   ui.download.addEventListener("click", downloadPack);
   ui.diagnosticButton.addEventListener("click", openDiagnostic);
   ui.routeSelect.addEventListener("change", async () => {

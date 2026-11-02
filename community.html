@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#163c34">
+    <meta name="description" content="Find CacheCourse learning spaces and explore the sources behind its lessons.">
+    <title>Community · CacheCourse</title>
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles.css">
+    <script type="module" src="/src/shell.js"></script>
+    <script type="module" src="/src/community-chat.js"></script>
+    <script type="module" src="/src/favorite-reminder.js"></script>
+    <script type="module" src="/src/activity-tracking.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/index.html" aria-label="CacheCourse home">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M5 10c6-2 11-1 15 2v18c-4-3-9-4-15-2V10Z"></path><path d="M35 10c-6-2-11-1-15 2v18c4-3 9-4 15-2V10Z"></path></svg></span>
+          <span class="brand-word">cachecourse<span class="brand-period">.</span></span>
+        </a>
+        <nav class="topnav" aria-label="Main navigation">
+          <a class="topnav-link" href="/index.html">Home</a>
+          <a class="topnav-link" href="/api-studio.html">API Studio</a>
+          <a class="topnav-link" href="/learning-hub.html">Learning Hub</a>
+          <a class="topnav-link active" href="/community.html" aria-current="page">Community</a>
+        </nav>
+        <div class="topbar-actions">
+          <div class="signal-pill" id="connection-status" role="status" aria-live="polite"><span class="signal-dot"></span><span id="connection-label">Checking connection</span></div>
+          <button class="button button-secondary community-account-button" id="community-login-button" type="button" hidden>Log in</button>
+          <button class="button button-primary community-account-button" id="community-signup-button" type="button" hidden>Sign Up</button>
+          <button class="button button-secondary community-account-button" id="community-account-button" type="button" hidden>My profile</button>
+          <button class="icon-button install-button" id="install-button" type="button" hidden aria-label="Install CacheCourse"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v9m0 0 3.5-3.5M10 11 6.5 7.5M3 12.5v3A1.5 1.5 0 0 0 4.5 17h11a1.5 1.5 0 0 0 1.5-1.5v-3"></path></svg></button>
+        </div>
+      </header>
+      <main class="sources-page community-page">
+        <section class="community-hero" aria-labelledby="community-title">
+          <div class="community-hero-copy">
+            <div class="eyebrow"><span class="eyebrow-mark"></span> LEARN BETTER, TOGETHER</div>
+            <h1 id="community-title">Come learn with us.</h1>
+            <p>Meet learners who share your professional interests. Choose one of ten sector groups to find conversations, exchange ideas, and learn together.</p>
+            <div class="community-hero-actions">
+              <a class="button button-primary" href="#sector-groups">Explore sector groups <span aria-hidden="true">→</span></a>
+              <a class="community-reference-link" href="https://community.andela.com/" target="_blank" rel="noreferrer">Visit Andela Community <span aria-hidden="true">↗</span></a>
+            </div>
+            <p class="community-disclaimer">Join a group that fits your interests. Additional groups are available by request and admin approval.</p>
+          </div>
+          <div class="community-hero-art" aria-hidden="true">
+            <span class="community-orbit community-orbit-one"></span><span class="community-orbit community-orbit-two"></span>
+            <div class="community-note"><span class="community-note-mark">✳</span><strong>Find your next step</strong><span>Learn · practise · explore</span></div>
+        </section>
+
+        <section class="community-chat" id="sector-groups" aria-labelledby="community-chat-title">
+          <div class="community-section-heading">
+            <div><div class="section-kicker">10 PROFESSIONAL SECTORS · LIVE GROUP CHAT</div><h2 id="community-chat-title">Find your sector community</h2></div>
+            <p>Join a community to take part in its private conversation. Additional group memberships require admin approval.</p>
+          </div>
+          <p class="community-chat-status" id="community-chat-status" role="status" aria-live="polite">Checking community setup…</p>
+          <div class="community-chat-setup" id="community-chat-setup" hidden>
+            <p>Live group conversations need a Supabase project. Follow the setup steps in the README and configure the public project URL and publishable key.</p>
+            <a href="/README.md" target="_blank" rel="noreferrer">Read chat setup steps <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="community-sector-grid" id="community-sector-grid" aria-label="Career sector groups"></div>
+          <section class="community-sector-view" id="community-sector-view" aria-labelledby="community-sector-title" hidden>
+            <button class="text-button community-sector-back" id="community-sector-back" type="button">← All sector groups</button>
+            <div class="community-sector-heading">
+              <div><span class="community-sector-kicker" id="community-sector-kicker"></span><h3 id="community-sector-title"></h3><p id="community-sector-description"></p></div>
+              <div class="community-sector-join" id="community-sector-join">
+                <p id="community-sector-membership-note"></p>
+                <button class="button button-primary" id="community-sector-join-button" type="button">Join this group</button>
+              </div>
+            </div>
+            <div class="community-sector-workspace" id="community-sector-workspace" hidden>
+              <nav class="community-sector-modules" aria-label="Community modules">
+                <span class="community-sector-modules-title">COMMUNITY MODULES</span>
+                <button type="button" data-community-module="overview" aria-current="page">Overview</button>
+                <button type="button" data-community-module="chat">Live chat</button>
+                <button type="button" data-community-module="members">Members</button>
+                <button type="button" data-community-module="messages">Direct messages</button>
+                <button class="community-sector-leave" id="community-chat-leave-group" type="button">Leave community</button>
+              </nav>
+              <div class="community-sector-module-content">
+                <section data-community-panel="overview">
+                  <span class="community-sector-kicker">YOUR COMMUNITY</span>
+                  <h4 id="community-module-overview-title"></h4>
+                  <p id="community-module-overview-description"></p>
+                  <p class="community-module-hint">Use the modules to join the live conversation, browse community members, or open a private message.</p>
+                </section>
+                <section data-community-panel="chat" hidden>
+                  <div class="community-chat-room" id="community-chat-room" hidden>
+                    <div class="community-chat-room-heading">
+                      <div><span class="community-chat-online-dot" aria-hidden="true"></span><strong id="community-chat-online-count">0 learners online</strong><span>in this group</span></div>
+                      <div class="community-chat-room-actions"><button class="text-button" id="community-chat-inbox" type="button">Direct messages</button><button class="text-button" id="community-chat-manage-blocks" type="button">Blocked learners</button></div>
+                    </div>
+                    <ol class="community-chat-messages" id="community-chat-messages" aria-label="Sector group messages" aria-live="polite"></ol>
+                    <form class="community-chat-compose" id="community-chat-compose">
+                      <label class="sr-only" for="community-chat-message">Write a message</label>
+                      <textarea id="community-chat-message" name="message" rows="2" maxlength="1000" placeholder="Say hello to the community…" required></textarea>
+                      <button class="button button-primary" type="submit">Send message</button>
+                    </form>
+                  </div>
+                </section>
+                <section data-community-panel="members" hidden>
+                  <section class="community-member-directory" aria-labelledby="community-member-title">
+                    <h4 id="community-member-title">Community members</h4>
+                    <ul id="community-member-list"></ul>
+                  </section>
+                </section>
+                <section data-community-panel="messages" hidden>
+                  <span class="community-sector-kicker">PRIVATE CONVERSATIONS</span>
+                  <h4>Direct messages</h4>
+                  <p>Private messages are visible only to their participants.</p>
+                  <button class="button button-primary" id="community-module-open-messages" type="button">Open your inbox</button>
+                </section>
+              </div>
+            </div>
+          </section>
+          <dialog class="community-report-dialog community-account-dialog" id="community-account-dialog" aria-labelledby="community-account-title">
+            <button class="community-dialog-close" id="community-account-close" type="button" aria-label="Close account dialog">×</button>
+            <div class="community-chat-auth" id="community-chat-auth" hidden>
+              <h3 id="community-account-title">Log in to your account</h3>
+              <p>Sign in to your account or create one to join a sector group. Email confirmation may be required.</p>
+              <form class="community-chat-auth-form" id="community-chat-auth-form">
+                <label id="community-display-name-label">Display name<input id="community-chat-display-name" name="display-name" type="text" autocomplete="nickname" minlength="2" maxlength="40"></label>
+                <label>Email<input id="community-chat-email" name="email" type="email" autocomplete="email" maxlength="254" required></label>
+                <label id="community-password-label">Password<input id="community-chat-password" name="password" type="password" autocomplete="current-password" minlength="8" maxlength="72" required></label>
+                <div class="community-chat-form-actions">
+                  <button class="button button-primary" id="community-auth-submit" type="submit" name="auth-action" value="signin">Log in</button>
+                  <button class="community-auth-switch" id="community-auth-switch" type="button">New here? Sign up</button>
+                  <button class="community-auth-switch" id="community-forgot-password" type="button">Forgot password?</button>
+                </div>
+              </form>
+              <p class="community-account-status" id="community-account-status" role="status" aria-live="polite"></p>
+            </div>
+            <div class="community-account-profile" id="community-account-profile" hidden>
+              <h3 id="community-account-profile-title">Your Community profile</h3>
+              <section class="community-profile-photo" aria-labelledby="community-profile-photo-title">
+                <h4 id="community-profile-photo-title">Profile photo</h4>
+                <div class="community-profile-photo-row">
+                  <img id="community-profile-avatar" alt="Your profile photo" hidden>
+                  <span class="community-profile-avatar-fallback" id="community-profile-avatar-fallback" aria-hidden="true">CC</span>
+                  <div>
+                    <label class="button button-secondary community-profile-photo-upload" for="community-profile-avatar-file">Choose photo</label>
+                    <input id="community-profile-avatar-file" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+                    <button class="community-auth-switch" id="community-profile-avatar-remove" type="button" hidden>Remove photo</button>
+                    <p>JPG, PNG, or WebP · up to 5 MB · visible to signed-in members of your communities.</p>
+                  </div>
+                </div>
+              </section>
+              <p class="community-account-display-name" id="community-account-display-name"></p>
+              <p id="community-account-email"></p>
+              <p id="community-account-membership"></p>
+              <button class="button button-secondary" id="community-profile-inbox" type="button">Direct messages</button>
+              <section class="community-profile-favourites" aria-labelledby="community-profile-favourites-title">
+                <h4 id="community-profile-favourites-title">Your learning wishlist</h4>
+                <p>Saved courses and reminders stay on this device and are separate from your Community account.</p>
+                <ul id="community-profile-favourites-list"></ul>
+                <label for="community-favourite-reminder">Study reminder
+                  <select id="community-favourite-reminder">
+                    <option value="weekly">Weekly reminder</option>
+                    <option value="monthly">Monthly reminder</option>
+                    <option value="off">No reminders</option>
+                  </select>
+                </label>
+              </section>
+              <p class="community-account-status community-profile-status" id="community-profile-status" role="status" aria-live="polite"></p>
+              <div class="community-chat-form-actions">
+                <button class="button button-secondary" id="community-account-close-profile" type="button">Done</button>
+                <button class="button button-primary" id="community-chat-signout" type="button">Sign out</button>
+              </div>
+            </div>
+          </dialog>
+          <dialog class="community-report-dialog community-direct-message-dialog" id="community-direct-message-dialog" aria-labelledby="community-direct-message-title">
+            <div class="community-direct-message-content">
+              <div class="community-direct-message-heading">
+                <div><h3 id="community-direct-message-title">Direct messages</h3><p id="community-direct-message-peer">Private conversations are visible only to their participants.</p></div>
+                <button class="community-dialog-close" id="community-direct-message-close" type="button" aria-label="Close direct messages">×</button>
+              </div>
+              <p id="community-direct-message-status" role="status" aria-live="polite"></p>
+              <ul id="community-direct-message-threads" aria-label="Your direct message conversations"></ul>
+              <ol class="community-chat-messages" id="community-direct-message-history" aria-label="Direct message history" aria-live="polite"></ol>
+              <form class="community-chat-compose" id="community-direct-message-form">
+                <label class="sr-only" for="community-direct-message-body">Write a private message</label>
+                <textarea id="community-direct-message-body" name="message" rows="2" maxlength="2000" placeholder="Write a private message…" required></textarea>
+                <button class="button button-primary" type="submit">Send private message</button>
+              </form>
+            </div>
+          </dialog>
+          <dialog class="community-report-dialog" id="community-report-dialog" aria-labelledby="community-report-title">
+            <form id="community-report-form">
+              <h3 id="community-report-title">Report this message</h3>
+              <p>Reports are visible to community moderators.</p>
+              <label for="community-report-reason">Why are you reporting it?</label>
+              <textarea id="community-report-reason" minlength="5" maxlength="500" required></textarea>
+              <div class="community-chat-form-actions"><button class="button button-secondary" type="button" data-report-cancel>Cancel</button><button class="button button-primary" type="submit">Submit report</button></div>
+            </form>
+          </dialog>
+          <dialog class="community-report-dialog" id="community-blocks-dialog" aria-labelledby="community-blocks-title">
+            <div class="community-blocks-content">
+              <h3 id="community-blocks-title">Blocked learners</h3>
+              <p>Unblock someone to show their messages again.</p>
+              <ul id="community-blocks-list"></ul>
+              <button class="button button-secondary" id="community-blocks-close" type="button">Done</button>
+            </div>
+          </dialog>
+        </section>
+
+        <section class="community-directory" aria-labelledby="community-spaces-title">
+          <div class="community-section-heading">
+            <div><div class="section-kicker">A PLACE TO BEGIN</div><h2 id="community-spaces-title">Explore learning spaces</h2></div>
+            <p>Choose a study tool, browse the sector conversations, or review the references behind CacheCourse lessons.</p>
+          </div>
+          <div class="community-space-grid">
+            <a class="community-space-card" href="#sector-groups"><span class="community-space-icon" aria-hidden="true">◎</span><span class="community-space-label">LIVE COMMUNITY</span><h3>Ten sector groups</h3><p>Choose one professional community and connect with members in its private live conversation.</p><span class="community-space-action">Explore groups <span aria-hidden="true">→</span></span></a>
+            <a class="community-space-card" href="/index.html#home-welcome-title"><span class="community-space-icon" aria-hidden="true">↗</span><span class="community-space-label">START HERE</span><h3>Explore your interests</h3><p>Browse study areas, find a topic that interests you, and choose a comfortable pace.</p><span class="community-space-action">Explore learning <span aria-hidden="true">→</span></span></a>
+            <a class="community-space-card" href="/api-studio.html"><span class="community-space-icon" aria-hidden="true">{ }</span><span class="community-space-label">PRACTICE</span><h3>FastAPI practice lab</h3><p>Try simulated API requests and validation outcomes in a deterministic, offline-friendly lab.</p><span class="community-space-action">Open API Studio <span aria-hidden="true">→</span></span></a>
+            <a class="community-space-card" href="/learning-hub.html"><span class="community-space-icon" aria-hidden="true">⌕</span><span class="community-space-label">COURSE DISCOVERY</span><h3>Programmes & courses</h3><p>Search study areas and browse course references, including the public Computer Science outline.</p><span class="community-space-action">Browse courses <span aria-hidden="true">→</span></span></a>
+            <a class="community-space-card" href="/module-compiler.html"><span class="community-space-icon" aria-hidden="true">⌘</span><span class="community-space-label">SAMPLE LESSON</span><h3>Compiler Construction</h3><p>Explore an original lexical-analysis lesson and a quick check based on the cited course summary.</p><span class="community-space-action">Try the sample <span aria-hidden="true">→</span></span></a>
+            <a class="community-space-card" href="#sources"><span class="community-space-icon" aria-hidden="true">◎</span><span class="community-space-label">LEARNING REFERENCES</span><h3>Sources & attribution</h3><p>See the official references, license notes, and third-party material details behind the content.</p><span class="community-space-action">Review references <span aria-hidden="true">→</span></span></a>
+            <a class="community-space-card" href="#source-opportunity"><span class="community-space-icon" aria-hidden="true">✳</span><span class="community-space-label">NEXT STEPS</span><h3>Opportunities</h3><p>Check any external opportunity directly. This cached example is not a live vacancy listing.</p><span class="community-space-action">Read the availability note <span aria-hidden="true">→</span></span></a>
+          </div>
+        </section>
+
+        <section class="community-sources" id="sources" aria-labelledby="community-sources-title">
+          <div class="community-section-heading">
+            <div><div class="section-kicker">TRANSPARENCY MATTERS</div><h2 id="community-sources-title">Sources & attribution</h2></div>
+            <p>Lesson explanations and exercises are original. These are the references and attribution notes used by CacheCourse.</p>
+          </div>
+          <div class="source-records" aria-label="Learning content references">
+          <article class="source-record">
+            <div class="source-record-type">FASTAPI FOUNDATIONS · LESSON 1</div>
+            <h2>First Steps</h2>
+            <a href="https://fastapi.tiangolo.com/tutorial/first-steps/" target="_blank" rel="noreferrer">Official FastAPI tutorial · First Steps <span aria-hidden="true">↗</span></a>
+            <p>License note: FastAPI project code is licensed under MIT. CacheCourse uses original summaries and examples; see the linked project license.</p>
+            <a class="license-link" href="https://github.com/fastapi/fastapi/blob/master/LICENSE" target="_blank" rel="noreferrer">FastAPI MIT license <span aria-hidden="true">↗</span></a>
+          </article>
+          <article class="source-record">
+            <div class="source-record-type">FASTAPI FOUNDATIONS · LESSON 2</div>
+            <h2>Path Parameters</h2>
+            <a href="https://fastapi.tiangolo.com/tutorial/path-params/" target="_blank" rel="noreferrer">Official FastAPI tutorial · Path Parameters <span aria-hidden="true">↗</span></a>
+            <p>License note: FastAPI project code is licensed under MIT. The tutorial is credited here as the technical reference for the original lesson summary.</p>
+            <a class="license-link" href="https://github.com/fastapi/fastapi/blob/master/LICENSE" target="_blank" rel="noreferrer">FastAPI MIT license <span aria-hidden="true">↗</span></a>
+          </article>
+          <article class="source-record">
+            <div class="source-record-type">FASTAPI FOUNDATIONS · LESSONS 3–4</div>
+            <h2>Request Body & Validation</h2>
+            <a href="https://fastapi.tiangolo.com/tutorial/body/" target="_blank" rel="noreferrer">Official FastAPI tutorial · Request Body <span aria-hidden="true">↗</span></a>
+            <p>License note: FastAPI project code is licensed under MIT. The linked documentation is the reference for the original request-model and validation examples.</p>
+            <a class="license-link" href="https://github.com/fastapi/fastapi/blob/master/LICENSE" target="_blank" rel="noreferrer">FastAPI MIT license <span aria-hidden="true">↗</span></a>
+          </article>
+          <article class="source-record">
+            <div class="source-record-type">FASTAPI FOUNDATIONS · LESSON 5</div>
+            <h2>Response Status Codes</h2>
+            <a href="https://fastapi.tiangolo.com/tutorial/response-status-code/" target="_blank" rel="noreferrer">Official FastAPI tutorial · Response Status Code <span aria-hidden="true">↗</span></a>
+            <p>License note: FastAPI project code is licensed under MIT. The linked documentation is the reference for the original status-code example.</p>
+            <a class="license-link" href="https://github.com/fastapi/fastapi/blob/master/LICENSE" target="_blank" rel="noreferrer">FastAPI MIT license <span aria-hidden="true">↗</span></a>
+          </article>
+          <article class="source-record source-record-course">
+            <div class="source-record-type">MIVA COURSE SAMPLE · CSC 408</div>
+            <h2>Compiler Construction · Full Course Summary</h2>
+            <p>Weeks 1–4, page 2. The sample lesson on lexical analysis is an original explanation and exercise based on this supplied course summary. The material's reuse license is not stated in the document.</p>
+            <p class="source-note-emphasis">No slide image or passage has been copied into the app. Use of the source is limited to attribution and the concepts needed for this learning prototype.</p>
+          </article>
+          <article class="source-record">
+            <div class="source-record-type">MIVA PROGRAMME DIRECTORY · 38 LISTINGS</div>
+            <h2>Schools, programmes and public course titles</h2>
+            <a href="https://miva.edu.ng/miva-programmes/" target="_blank" rel="noreferrer">Miva Open University · programme catalogue <span aria-hidden="true">↗</span></a>
+            <p>CacheCourse uses the public catalogue to organize programme names under Miva’s schools and study levels. Short programme descriptions are original summaries. This directory is not a complete institutional course catalogue.</p>
+            <a class="license-link" href="https://miva.edu.ng/bsc-in-computer-science/" target="_blank" rel="noreferrer">BSc Computer Science · public curriculum outline <span aria-hidden="true">↗</span></a>
+            <p>For Computer Science only, the Learning Hub lists 56 course titles across eight level/semester groups from the public outline. These are source references, not CacheCourse lessons or a reproduced syllabus. Other programme pages link to official information where available.</p>
+          </article>
+          <article class="source-record">
+            <div class="source-record-type">OPTIONAL EXTERNAL MATERIAL · FASTAPI</div>
+            <h2>Udemy video-course links</h2>
+            <a href="https://www.udemy.com/course/fastapi-the-complete-course/" target="_blank" rel="noreferrer">FastAPI - The Complete Course 2026 (Beginner + Advanced) <span aria-hidden="true">↗</span></a>
+            <p>Third-party proprietary course by Eric Roby and Chad Darby. CacheCourse links to the listing and does not copy or cache its videos, exercises, or source code. A Udemy account and payment may be required. Listing details were checked 9 Oct 2026.</p>
+            <a class="license-link" href="https://www.udemy.com/course/rest-api-fastapi-python/" target="_blank" rel="noreferrer">Mastering REST APIs with FastAPI · Udemy <span aria-hidden="true">↗</span></a>
+            <p>Third-party proprietary course by Jose Salvatierra. CacheCourse links only; access and course details can change. Listing details were checked 9 Oct 2026.</p>
+          </article>
+          <article class="source-record" id="source-opportunity">
+            <div class="source-record-type">OPPORTUNITY CARD · POINT-IN-TIME LINK</div>
+            <h2>Nile careers</h2>
+            <a href="https://www.usenile.co/careers" target="_blank" rel="noreferrer">Nile careers page <span aria-hidden="true">↗</span></a>
+            <p>The pathway card is a sample next-step link, not a verified vacancy or employment guarantee. Availability must be checked on the employer's current page before a demo.</p>
+          </article>
+          </div>
+        <p class="sources-offline-note">Source pages require internet access. Cached lesson explanations, practice, and progress remain available offline.</p>
+        </section>
+      </main>
+      <footer class="page-footer"><span>CacheCourse <span class="footer-dot">●</span> A focused learning prototype</span><span>Made for learning between connections.</span></footer>
+    </div>
+  </body>
+</html>

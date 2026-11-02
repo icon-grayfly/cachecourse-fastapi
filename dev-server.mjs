@@ -2,7 +2,9 @@ import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { handleAdminAPI } from "./src/admin-api.js";
 import { handleAdminAuth } from "./src/admin-auth.js";
+import { handlePublicConfig } from "./src/public-config.js";
 
 const root = resolve(fileURLToPath(new URL(".", import.meta.url)));
 
@@ -72,7 +74,16 @@ const server = createServer(async (request, response) => {
       headers,
       ...(body === undefined ? {} : { body })
     });
-    const apiResponse = await handleAdminAuth(apiRequest);
+    const apiResponse = ["/api/admin/login", "/api/admin/logout", "/api/admin/session"].includes(pathname)
+      ? await handleAdminAuth(apiRequest)
+      : await handleAdminAPI(apiRequest);
+    response.writeHead(apiResponse.status, Object.fromEntries(apiResponse.headers.entries()));
+    response.end(await apiResponse.text());
+    return;
+  }
+
+  if (pathname === "/api/public-config") {
+    const apiResponse = handlePublicConfig(new Request(requestUrl, { method: request.method || "GET" }));
     response.writeHead(apiResponse.status, Object.fromEntries(apiResponse.headers.entries()));
     response.end(await apiResponse.text());
     return;

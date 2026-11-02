@@ -5,7 +5,7 @@ import { COURSES, getCourse, getCourseSchedule } from "../src/catalog.js";
 import { deleteLocalCourse, exportLocalCatalog, getCatalogCourse, getLocalCourses, importLocalCatalog, saveLocalCourse } from "../src/catalog-store.js";
 import { PROGRAMMES } from "../src/programmes.js";
 import { simulateRequest } from "../src/api-simulator.js";
-import { answerCompilerQuestion, completeLesson, createInitialState, getNextLesson, getSuggestedRoute, isOpportunityUnlocked, normalizeState, setRoute } from "../src/logic.js";
+import { answerCompilerQuestion, checkFavoriteReminder, completeLesson, createInitialState, getNextLesson, getSuggestedRoute, isOpportunityUnlocked, normalizeState, setFavoriteReminderCadence, setRoute, toggleFavorite } from "../src/logic.js";
 
 test("diagnostic routes learners by correct answers without blocking manual choice", () => {
   assert.equal(getSuggestedRoute([true, true, false]), "fast");
@@ -40,6 +40,27 @@ test("stored state is sanitized to known lesson IDs and supported routes", () =>
   assert.equal(state.route, null);
   assert.deepEqual(state.completed, [LESSONS[0].id]);
   assert.deepEqual(state.answers, {});
+});
+
+test("course favourites are unique, validated, and removable", () => {
+  const saved = toggleFavorite(createInitialState(), "miva-computer-science", new Date("2026-11-01T10:00:00Z"));
+  assert.deepEqual(saved.favorites, ["miva-computer-science"]);
+  assert.equal(saved.favoriteReminderLastAt, "2026-11-01T10:00:00.000Z");
+  assert.deepEqual(toggleFavorite(saved, "miva-computer-science").favorites, []);
+  assert.throws(() => toggleFavorite(saved, "../not-a-course"), /valid course/);
+  assert.deepEqual(normalizeState({ favorites: ["fastapi", "bad/id", "fastapi"] }).favorites, ["fastapi"]);
+});
+
+test("favourite reminders follow the learner's weekly, monthly, or off preference", () => {
+  const started = toggleFavorite(createInitialState(), "fastapi", new Date("2026-11-01T10:00:00Z"));
+  assert.equal(checkFavoriteReminder(started, new Date("2026-11-07T10:00:00Z")).due, false);
+  assert.equal(checkFavoriteReminder(started, new Date("2026-11-08T10:00:00Z")).due, true);
+  const monthly = setFavoriteReminderCadence(started, "monthly", new Date("2026-11-01T10:00:00Z"));
+  assert.equal(checkFavoriteReminder(monthly, new Date("2026-11-30T10:00:00Z")).due, false);
+  assert.equal(checkFavoriteReminder(monthly, new Date("2026-12-01T10:00:00Z")).due, true);
+  const off = setFavoriteReminderCadence(started, "off", new Date("2026-11-01T10:00:00Z"));
+  assert.equal(checkFavoriteReminder(off, new Date("2027-01-01T10:00:00Z")).due, false);
+  assert.throws(() => setFavoriteReminderCadence(started, "daily"), /supported reminder/);
 });
 
 test("every lesson has a source, license reference, and answer that matches an option", () => {

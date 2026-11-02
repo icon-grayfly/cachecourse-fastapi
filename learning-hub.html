@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="/styles.css">
     <script type="module" src="/src/shell.js"></script>
     <script type="module" src="/src/learning-hub.js"></script>
+    <script type="module" src="/src/favorite-reminder.js"></script>
+    <script type="module" src="/src/activity-tracking.js"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -20,10 +22,10 @@
           <span class="brand-word">cachecourse<span class="brand-period">.</span></span>
         </a>
         <nav class="topnav" aria-label="Main navigation">
-          <a class="topnav-link" href="/index.html">My pathway</a>
+          <a class="topnav-link" href="/index.html">Home</a>
           <a class="topnav-link" href="/api-studio.html">API Studio</a>
           <a class="topnav-link active" href="/learning-hub.html" aria-current="page">Learning Hub</a>
-          <a class="topnav-link" href="/sources.html">Source notes</a>
+          <a class="topnav-link" href="/community.html">Community</a>
         </nav>
         <div class="topbar-actions">
           <div class="signal-pill" id="connection-status" role="status" aria-live="polite"><span class="signal-dot"></span><span id="connection-label">Checking connection</span></div>
@@ -50,7 +52,7 @@
         <section class="hub-catalog" aria-labelledby="catalog-title">
           <div class="hub-section-heading">
             <div><div class="section-kicker">EXPLORE THE COLLECTION</div><h2 id="catalog-title">Programmes, courses and pathways</h2></div>
-            <div class="hub-heading-actions"><p id="course-count" class="hub-count" aria-live="polite">Loading the catalogue…</p><a class="button button-secondary hub-admin-link" href="/admin.html">Manage courses <span aria-hidden="true">↗</span></a></div>
+            <div class="hub-heading-actions"><p id="course-count" class="hub-count" aria-live="polite">Loading the catalogue…</p><button class="button button-secondary favorite-list-open" id="favorite-list-open" type="button">My learning list <span class="favorite-count" id="favorite-count">0</span></button></div>
           </div>
           <div class="hub-filters" aria-label="Filter the catalogue">
             <label class="hub-select-label">School or department<select id="department-filter"><option value="all">All schools and departments</option></select></label>
@@ -60,6 +62,21 @@
           <div class="hub-results-heading"><span id="results-label">Featured learning spaces</span><span>Programme listings and learning materials are clearly identified</span></div>
           <div class="course-grid" id="course-grid" aria-live="polite"></div>
           <p class="hub-empty" id="course-empty" hidden>No courses match that search yet. Try a different title or department.</p>
+          <dialog class="favorite-list-dialog" id="favorite-list-dialog" aria-labelledby="favorite-list-title">
+            <button class="community-dialog-close" id="favorite-list-close" type="button" aria-label="Close learning list">×</button>
+            <h2 id="favorite-list-title">Your learning wishlist</h2>
+            <p>Save courses you want to explore. Your list stays on this device.</p>
+            <p class="favorite-list-status" id="favorite-list-status" role="status" aria-live="polite"></p>
+            <ul id="favorite-list-items"></ul>
+            <label class="favorite-reminder-setting" for="favorite-list-reminder">Study reminder
+              <select id="favorite-list-reminder">
+                <option value="weekly">Weekly reminder</option>
+                <option value="monthly">Monthly reminder</option>
+                <option value="off">No reminders</option>
+              </select>
+            </label>
+            <button class="button button-secondary" id="favorite-list-done" type="button">Done</button>
+          </dialog>
           <aside class="hub-note"><span class="hub-note-icon" aria-hidden="true">i</span><p>The Miva programme directory reflects its public catalogue, not a claim that CacheCourse contains every official syllabus. Where a course outline is linked, we label source references separately from interactive lessons. External resources may require a connection or payment.</p></aside>
         </section>
       </main>
